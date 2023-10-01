@@ -1,9 +1,7 @@
 package inhatc.TakeMyRoutine.domain;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
-import org.hibernate.engine.internal.ImmutableEntityEntry;
 
 @Entity
 @Builder
@@ -12,13 +10,17 @@ import org.hibernate.engine.internal.ImmutableEntityEntry;
 @AllArgsConstructor
 public class User {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name="login_id")
+
+    @Column(name = "login_id", nullable = false, unique = true)
     private String loginId;
+
+    @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false, unique = true)
     private String nickname;
 
 }

@@ -15,17 +15,14 @@ import java.util.Date;
 @AllArgsConstructor
 public class Routine {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="routine_id")
-    private Long Id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "routine_id")
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "login_id")
-    private Routine routineId;
-
-    @ManyToOne
-    @JoinColumn(name = "nickname")
-    private Routine routineNickName;
+    private User user;  // User 엔터티와 연관
 
     private String title;
     private String memo;
@@ -34,8 +31,4 @@ public class Routine {
     private Date dateTime;
     private Date start;
     private Date cycle;
-
-
-
-
 }
