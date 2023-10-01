@@ -2,12 +2,17 @@ package inhatc.TakeMyRoutine.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.cglib.core.Local;
 
+import java.text.DateFormat;
+import java.time.LocalDateTime;
 import java.util.Date;
+
 
 @Entity
 @Builder
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Todo {
@@ -22,7 +27,7 @@ public class Todo {
     private User user;  // User 엔터티와 연관
 
     private String title; // 제목
-    private Date dataTime; // 시간
+    private LocalDateTime dataTime; // 시간
     private String memo; // 내용
     private String place; // 약속 장소
 }

@@ -5,6 +5,7 @@ import inhatc.TakeMyRoutine.domain.User;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
@@ -19,26 +20,18 @@ public class TodoRequest {
     @NotEmpty(message = "제목이 비어있습니다.")
     private String title;
 
-    private Date dateTime;
+    private LocalDateTime dateTime;
 
     @NotEmpty(message = "내용이 비어있습니다.")
     private String memo;
 
     private String place;
 
-    public TodoRequest(User user) {
-        this.todoId = user.getId();
-        this.todoNickName = user.getNickname();
+    // 기존의 User 필드 삭제
+    // 생성자 및 toEntity 메서드 수정
+
+    public TodoRequest(Long todoId) {
+        this.todoId = todoId;
     }
 
-
-    public Todo toEntity(User user) {
-        return Todo.builder()
-                .user(user)
-                .title(this.title)
-                .dataTime(this.dateTime)
-                .memo(this.memo)
-                .place(this.place)
-                .build();
-    }
 }

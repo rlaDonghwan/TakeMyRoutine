@@ -13,13 +13,18 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpSession;
 
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 @Controller
+
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/home")
 public class TodoController {
     private final TodoService todoService;
-    private final UserService userService;
+    private final HttpSession httpSession;
 
     @GetMapping("/todoInsert")
     public String todoPage(Model model, HttpSession session) {
@@ -27,37 +32,29 @@ public class TodoController {
         model.addAttribute("pageName", "Todo");
         log.info("TodoController");
 
-        // 세션에서 사용자 정보 가져오기
-        User user = (User) session.getAttribute("userId");  // 키를 "user"가 아닌 "userId"로 수정
+        Long userId = (Long) session.getAttribute("userId");
 
         // 사용자 정보가 없으면 로그인 페이지로 리다이렉트
-        if (user == null) {
+        if (userId == null) {
             return "redirect:/home/login";
         }
 
         // 사용자 정보가 있으면 Todo 페이지로 이동
-        model.addAttribute("todoRequest", new TodoRequest(user));
+        model.addAttribute("todoRequest", new TodoRequest(userId));
         return "todoInsert";
     }
 
 
-
-
-
-
     @PostMapping("/todoInsert")
-    public String todoInsert(@Valid @ModelAttribute TodoRequest todoRequest, BindingResult bindingResult, Model model) {
-
+    public String todoInsert( String time, @Valid @ModelAttribute TodoRequest todoRequest, BindingResult bindingResult, Model model) {
         model.addAttribute("loginType", "home");
         model.addAttribute("pageName", "Todo");
-
-//        if (bindingResult.hasErrors()) {
-//            return "todoInsert";
-//        }
-        log.info("입력");
+        Long userId = (Long) httpSession.getAttribute("userId");
+        todoRequest.setTodoId(userId);
 
         todoService.join(todoRequest);
         return "redirect:/home";
+
     }
 
 }

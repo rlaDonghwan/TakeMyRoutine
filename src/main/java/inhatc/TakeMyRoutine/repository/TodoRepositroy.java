@@ -1,6 +1,7 @@
 package inhatc.TakeMyRoutine.repository;
 
 import inhatc.TakeMyRoutine.domain.Todo;
+import inhatc.TakeMyRoutine.domain.User;
 import lombok.extern.java.Log;
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -28,7 +29,7 @@ public class Routine {
     private String memo;
     private String place;
 
-    private Date dateTime;
+    private LocalDateTime dateTime;
     private Date start;
     private Date cycle;
 }
