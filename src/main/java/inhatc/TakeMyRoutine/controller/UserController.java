@@ -1,8 +1,10 @@
 package inhatc.TakeMyRoutine.controller;
 
+import inhatc.TakeMyRoutine.domain.Todo;
 import inhatc.TakeMyRoutine.domain.User;
 import inhatc.TakeMyRoutine.dto.JoinRequest;
 import inhatc.TakeMyRoutine.dto.LoginRequest;
+import inhatc.TakeMyRoutine.service.TodoService;
 import inhatc.TakeMyRoutine.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -15,6 +17,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 @Slf4j
 @RequiredArgsConstructor
@@ -22,18 +26,29 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+    private final TodoService todoService;
 
     @GetMapping(value = {"", "/"})
     public String home(Model model, @SessionAttribute(name = "userId", required = false) Long userId) {
         model.addAttribute("loginType", "home");
         model.addAttribute("pageName", "home");
+
+        // 세션에서 userId를 받아오기
         User loginUser = userService.getLoginUserById(userId);
-        if(loginUser != null) {
+
+        if (loginUser != null) {
             model.addAttribute("nickname", loginUser.getNickname());
+
+            // 여기서 추가적인 디비 정보를 가져와서 모델에 추가
+            // 예시: Todo 리스트를 가져온다고 가정
+            List<Todo> todoList = todoService.getTodoList(userId);
+            model.addAttribute("todoList", todoList);
         }
+
         log.info("UseController");
         return "home";
     }
+
 
     @GetMapping("/join")
     public String joinPage(Model model) {

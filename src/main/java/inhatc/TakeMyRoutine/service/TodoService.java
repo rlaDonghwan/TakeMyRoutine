@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 
 @Service
@@ -43,4 +44,10 @@ public class TodoService {
         // Todo 저장
         todoRepositroy.save(todo);
     }
+
+    public List<Todo> getTodoList(Long userId) {
+        // TodoRepository를 사용하여 해당 사용자의 Todo 리스트를 가져오는 로직 작성
+        return todoRepositroy.findByUserId(userId);
+    }
+
 }
