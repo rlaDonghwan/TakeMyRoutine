@@ -4,6 +4,7 @@ import inhatc.TakeMyRoutine.domain.Todo;
 import inhatc.TakeMyRoutine.domain.User;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -12,6 +13,7 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Slf4j
 public class TodoRequest {
 
     private Long todoId;
@@ -22,16 +24,17 @@ public class TodoRequest {
 
     private LocalDateTime dateTime;
 
-    @NotEmpty(message = "내용이 비어있습니다.")
+    @NotEmpty(message = "내용이 비어있습니다. ")
     private String memo;
 
     private String place;
 
-    // 기존의 User 필드 삭제
-    // 생성자 및 toEntity 메서드 수정
+
 
     public TodoRequest(Long todoId) {
         this.todoId = todoId;
     }
+
+
 
 }

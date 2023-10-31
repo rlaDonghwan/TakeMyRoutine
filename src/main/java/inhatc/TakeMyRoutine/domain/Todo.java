@@ -3,6 +3,7 @@ package inhatc.TakeMyRoutine.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.cglib.core.Local;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.text.DateFormat;
 import java.time.LocalDateTime;
@@ -27,6 +28,7 @@ public class Todo {
     private User user;  // User 엔터티와 연관
 
     private String title; // 제목
+    @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm")
     private LocalDateTime dataTime; // 시간
     private String memo; // 내용
     private String place; // 약속 장소

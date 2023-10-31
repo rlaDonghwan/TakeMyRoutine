@@ -48,7 +48,7 @@ public class TodoController {
 
 
     @PostMapping("/todoInsert")
-    public String todoInsert( String time, @Valid @ModelAttribute TodoRequest todoRequest, BindingResult bindingResult, Model model) {
+    public String todoInsert(@Valid @ModelAttribute TodoRequest todoRequest, Model model) {
         model.addAttribute("loginType", "home");
         model.addAttribute("pageName", "Todo");
         Long userId = (Long) httpSession.getAttribute("userId");
