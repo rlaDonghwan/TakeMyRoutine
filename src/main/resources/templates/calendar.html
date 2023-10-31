@@ -84,8 +84,8 @@
                     <input type="text" th:field="*{title}" class="form-control" id="title"
                 </div>
                 <div class="mb-3">
-                    <label for="eventTime" class="form-label">날짜 및 시간:</label>
-                    <input type="datetime-local" id="eventTime" th:field="*{dataTime}">
+                    <label for="eventTime">날짜 및 시간:</label>
+                    <input type="datetime-local" id="eventTime" class="form-control" th:field="*{dataTime}">
 
                 </div>
                 <div class="form-group">
@@ -171,24 +171,16 @@
                 Swal.fire({
                     title: '이벤트 정보 수정 또는 삭제',
                     html: `
-        <form>
-            <div class="form-group">
-                <label for="eventTitle">제목</label>
-                <input type="text" class="form-control" id="eventTitle" value="${event.title}">
-            </div>
-            <div class="form-group">
-                <label for="eventTime">시간</label>
-                <input type="datetime-local" class="form-control" id="eventTime" value="${getLocalDateTimeString(event.start)}">
-            </div>
-            <div class="form-group">
-                <label for="eventContent">내용</label>
-                <input type="text" class="form-control" id="eventContent" value="${event.extendedProps.description || ''}">
-            </div>
-            <div class="form-group">
-                <label for="eventLocation">장소</label>
-                <input type="text" class="form-control" id="eventLocation" value="${event.extendedProps.location || ''}">
-            </div>
-        </form>
+            <form>
+                <div class="form-group">
+                    <label for="eventTitle">제목</label>
+                    <input type="text" class="form-control" id="title" value="${event.title}">
+                </div>
+                <div class="form-group">
+                    <label for="eventTime">시간</label>
+                    <input type="datetime-local" class="form-control" id="eventTime" value="${getLocalDateTimeString(event.start)}" th:field="*{dataTime}">
+                </div>
+            </form>
         `,
                     showCancelButton: true,
                     confirmButtonText: '확인',
@@ -196,26 +188,38 @@
                     focusConfirm: false,
                     preConfirm: () => {
                         return {
-                            title: document.getElementById('eventTitle').value,
+                            title: document.getElementById('title').value,
                             time: document.getElementById('eventTime').value,
-                            content: document.getElementById('eventContent').value,
-                            location: document.getElementById('eventLocation').value,
                         };
                     },
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        event.setProp('title', result.value.title);
-                        event.setStart(result.value.time);
-                        event.setExtendedProp('description', result.value.content);
-                        event.setExtendedProp('location', result.value.location);
+                        const { value } = result;
+                        const { title, time } = value;
+
+                        // 서버에 데이터 전송
+                        axios.post('/home/calendar/updateEvent', {
+                            todoId: event.id,  // 수정할 이벤트의 ID
+                            title: title,
+                            dataTime: time,
+                        })
+                            .then(response => {
+                                console.log('서버 응답:', response);
+
+                                // 서버에서 저장된 데이터를 받아온 후 FullCalendar에 반영
+                                const updatedEvent = response.data;
+                                event.setProp('title', updatedEvent.title);
+                                event.setStart(updatedEvent.dataTime);
+                            })
+                            .catch(error => {
+                                console.error('Error updating event', error);
+                            });
                     } else if (result.dismiss === Swal.DismissReason.cancel) {
                         event.remove();
                     }
                 });
+
             }
-
-
-
 
         });
     </script>

@@ -27,7 +27,10 @@
 
                 <div class="mb-3">
                     <label for="dateTimeInput" class="form-label">날짜 및 시간:</label>
-                    <input type="datetime-local" id="dateTimeInput" th:field="*{dateTime}">
+                    <div class="input-group">
+                        <input type="datetime-local" id="dateTimeInput" th:field="*{dateTime}" class="form-control">
+                        <button type="button" class="btn btn-secondary" onclick="insertCurrentTime()">현재 시간</button>
+                    </div>
                 </div>
                 <div class="mb-3">
                     <label for="memo" class="form-label">메모:</label>
@@ -48,5 +51,12 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function insertCurrentTime() {
+        var currentDate = new Date();
+        var formattedDate = currentDate.toISOString().slice(0, 16);
+        document.getElementById('dateTimeInput').value = formattedDate;
+    }
+</script>
 </body>
 </html>

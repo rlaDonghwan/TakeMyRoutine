@@ -29,7 +29,7 @@ public class TodoRequest {
 
     private String place;
 
-
+    private boolean completed;
 
     public TodoRequest(Long todoId) {
         this.todoId = todoId;

@@ -6,11 +6,14 @@ import inhatc.TakeMyRoutine.dto.TodoRequest;
 import inhatc.TakeMyRoutine.repository.TodoRepositroy;
 import inhatc.TakeMyRoutine.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
+import jdk.jfr.Event;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -48,5 +51,44 @@ public class TodoService {
         return todoRepositroy.findByUserId(userId);
     }
 
+    public void updateTodo(Long todoId, String updatedTitle, String updatedMemo, String updatedPlace, LocalDateTime updatedDateTime) {
+        // 세션에서 userId 가져오기
+        Long userId = (Long) httpSession.getAttribute("userId");
 
+        // Todo 엔터티 조회
+        Optional<Todo> optionalTodo = todoRepositroy.findByIdAndUserId(todoId, userId);
+
+        optionalTodo.ifPresent(todo -> {
+            // Todo를 찾았으면 업데이트
+            todo.setTitle(updatedTitle);
+            todo.setMemo(updatedMemo);
+            todo.setPlace(updatedPlace);
+            todo.setDataTime(updatedDateTime);  // 수정된 부분
+
+            // 업데이트된 Todo를 저장
+            todoRepositroy.save(todo);
+        });
+    }
+
+
+    public void completeTodos(List<Long> todoIds) {
+        todoRepositroy.deleteByIdIn(todoIds);
+    }
+
+
+    public Todo getEventByUserIdAndTodoId(Long userId, Long todoId) {
+        return todoRepositroy.findByIdAndUserId(todoId, userId).orElse(null);
+    }
+
+    public Todo updateCalendar(Todo existingTodo) {
+        // 이벤트 정보를 업데이트
+        // 이 부분에서 다른 로직이 필요하다면 추가하셔도 됩니다.
+        existingTodo.setTitle(existingTodo.getTitle());
+        existingTodo.setDataTime(existingTodo.getDataTime());
+        existingTodo.setMemo(existingTodo.getMemo());
+        existingTodo.setPlace(existingTodo.getPlace());
+
+        // 데이터베이스에 업데이트된 이벤트 저장
+        return todoRepositroy.save(existingTodo);
+    }
 }
