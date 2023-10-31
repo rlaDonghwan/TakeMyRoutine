@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css" />
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // 달력 초기화
+            $('#calendar').fullCalendar({
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'month,agendaWeek,agendaDay'
+                },
+                editable: true, // 이벤트 편집 가능 여부
+                events: [
+                    // 여기에 기존 일정 데이터를 불러올 수 있습니다.
+                    // { title: 'Event 1', start: '2023-10-28' },
+                    // { title: 'Event 2', start: '2023-10-29' }
+                ],
+                eventClick: function(event) {
+                    // 일정을 클릭할 때의 동작
+                    var title = prompt('일정을 수정하세요:', event.title);
+                    if (title) {
+                        event.title = title;
+                        $('#calendar').fullCalendar('updateEvent', event);
+                    }
+                },
+                dayClick: function(date) {
+                    // 날짜를 클릭할 때의 동작
+                    var title = prompt('일정을 추가하세요:');
+                    if (title) {
+                        $('#calendar').fullCalendar('renderEvent', {
+                            title: title,
+                            start: date,
+                            allDay: true
+                        }, true);
+                    }
+                },
+                eventDrop: function(event, delta, revertFunc) {
+                    // 일정을 드래그하여 이동했을 때의 동작
+                    if (!confirm("이 일정을 수정하시겠습니까?")) {
+                        revertFunc();
+                    }
+                },
+                eventResize: function(event, delta, revertFunc) {
+                    // 일정을 리사이즈했을 때의 동작
+                    if (!confirm("이 일정을 수정하시겠습니까?")) {
+                        revertFunc();
+                    }
+                }
+            });
+        });
+    </script>
+
+</head>
+<body>
+
+<div th:include="navigation.html"></div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <h3>Todo List</h3>
+                <div class="border p-3">
+                    <button class="btn btn-success"
+                            th:onclick="|location.href='@{/{loginType}/todoInsert (loginType=${loginType})}'|">추가
+                    </button>
+                    <ul>
+                        <li th:each="todo : ${todoList}">
+                            <span th:text="${todo.title}"></span> - <span th:text="${todo.memo}"></span> - <span
+                                th:text="${todo.place}"></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="calendar"></div>
+
+</body>
+</html>

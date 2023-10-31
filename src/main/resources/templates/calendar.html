@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'/>
+    <title>
+        Calendar
+    </title>
+    <link href='/docs/dist/demo-to-codepen.css' rel='stylesheet'/>
+    <style>
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+            font-size: 14px;
+        }
+
+        #calendar {
+            max-width: 1100px;
+            margin: 40px auto;
+        }
+
+    </style>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js'></script>
+    <script src='/docs/dist/demo-to-codepen.js'></script>
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- FullCalendar JS -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/main.min.js"></script>
+
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendar');
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                headerToolbar: {
+                    start: 'dayGridMonth,timeGridWeek,timeGridDay custom1',
+                    center: 'title',
+                    end: 'custom2 prevYear,prev,next,nextYear'
+                },
+                footerToolbar: {
+                    start: 'custom1,custom2',
+                    center: '',
+                    end: 'prev,next'
+                },
+                customButtons: {
+                    custom1: {
+                        text: 'custom 1',
+                        click: function () {
+                            alert('clicked custom button 1!');
+                        }
+                    },
+                    custom2: {
+                        text: 'custom 2',
+                        click: function () {
+                            alert('clicked custom button 2!');
+                        }
+                    }
+                },
+                editable: true,
+                dateClick: function (info) {
+                    openModal(info.dateStr);
+                },
+                eventClick: function (info) {
+                    openEventModal(info.event);
+                },
+            });
+
+            calendar.render();
+
+            function openModal(date) {
+                Swal.fire({
+                    title: '일정 입력',
+                    html: `
+            <form>
+                <div class="form-group">
+                    <label for="eventTitle">제목</label>
+                    <input type="text" th:field="*{title}" class="form-control" id="title"
+                </div>
+                <div class="mb-3">
+                    <label for="eventTime" class="form-label">날짜 및 시간:</label>
+                    <input type="datetime-local" id="eventTime" th:field="*{dataTime}">
+
+                </div>
+                <div class="form-group">
+                    <label for="eventContent">내용</label>
+                    <textarea th:field="*{memo}" class="form-control" id="memo"
+                              th:errorclass="is-invalid" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="eventLocation">장소</label>
+                    <input type="text" th:field="*{place}" class="form-control" id="place"
+                </div>
+            </form>
+            `,
+                    showCancelButton: true,
+                    confirmButtonText: '확인',
+                    cancelButtonText: '취소',
+                    focusConfirm: false,
+                    preConfirm: () => {
+                        return {
+                            title: document.getElementById('title').value,
+                            time: document.getElementById('eventTime').value,
+                            content: document.getElementById('memo').value,
+                            location: document.getElementById('place').value,
+                        };
+                    },
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        var { title, time, content, location } = result.value;
+
+                        if (title && time && content && location) {
+                            console.log('전송 데이터:', {
+                                title: title,
+                                start: time,
+                                description: content,
+                                location: location,
+                            });
+                            // 서버로 데이터 전송
+                            axios.post('/home/calendar/addEvent', {
+                                title: title,
+                                dataTime: time, // 수정된 부분
+                                description: content,
+                                location: location,
+
+                            })
+                                .then(response => {
+                                    console.log('서버 응답:', response);
+                                    console.log('description:', response.data.description);
+                                    console.log('location:', response.data.location);
+                                    console.log('이벤트 추가:', {
+                                        title: response.data.title,
+                                        start: response.data.dataTime, // 수정된 부분
+                                        description: response.data.description,
+                                        location: response.data.location,
+                                    });
+                                    // 서버에서 저장된 데이터를 받아온 후 FullCalendar에 추가
+                                    calendar.addEvent({
+                                        title: response.data.title,
+                                        start: response.data.dataTime, // 수정된 부분
+                                        description: response.data.description,
+                                        location: response.data.location,
+                                    });
+                                })
+
+                                    .catch(error => {
+                                    console.error('Error saving event', error);
+                                });
+                        }
+                    }
+                });
+            }
+            function getLocalDateTimeString(date) {
+                const eventDate = new Date(date);
+                const year = eventDate.getFullYear();
+                const month = (eventDate.getMonth() + 1).toString().padStart(2, '0');
+                const day = eventDate.getDate().toString().padStart(2, '0');
+                const hours = eventDate.getHours().toString().padStart(2, '0');
+                const minutes = eventDate.getMinutes().toString().padStart(2, '0');
+                return `${year}-${month}-${day}T${hours}:${minutes}`;
+            }
+
+
+            function openEventModal(event) {
+                Swal.fire({
+                    title: '이벤트 정보 수정 또는 삭제',
+                    html: `
+        <form>
+            <div class="form-group">
+                <label for="eventTitle">제목</label>
+                <input type="text" class="form-control" id="eventTitle" value="${event.title}">
+            </div>
+            <div class="form-group">
+                <label for="eventTime">시간</label>
+                <input type="datetime-local" class="form-control" id="eventTime" value="${getLocalDateTimeString(event.start)}">
+            </div>
+            <div class="form-group">
+                <label for="eventContent">내용</label>
+                <input type="text" class="form-control" id="eventContent" value="${event.extendedProps.description || ''}">
+            </div>
+            <div class="form-group">
+                <label for="eventLocation">장소</label>
+                <input type="text" class="form-control" id="eventLocation" value="${event.extendedProps.location || ''}">
+            </div>
+        </form>
+        `,
+                    showCancelButton: true,
+                    confirmButtonText: '확인',
+                    cancelButtonText: '삭제',
+                    focusConfirm: false,
+                    preConfirm: () => {
+                        return {
+                            title: document.getElementById('eventTitle').value,
+                            time: document.getElementById('eventTime').value,
+                            content: document.getElementById('eventContent').value,
+                            location: document.getElementById('eventLocation').value,
+                        };
+                    },
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        event.setProp('title', result.value.title);
+                        event.setStart(result.value.time);
+                        event.setExtendedProp('description', result.value.content);
+                        event.setExtendedProp('location', result.value.location);
+                    } else if (result.dismiss === Swal.DismissReason.cancel) {
+                        event.remove();
+                    }
+                });
+            }
+
+
+
+
+        });
+    </script>
+
+
+</head>
+<body>
+<div th:include="navigation.html"></div>
+<div id='calendar'></div>
+<script defer src='https://static.cloudflareinsights.com/beacon.min.js'
+        data-cf-beacon='{"token": "dc4641f860664c6e824b093274f50291"}'></script>
+
+</body>
+</html>
