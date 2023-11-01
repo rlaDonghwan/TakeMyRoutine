@@ -56,6 +56,7 @@ public class TodoService {
         Long userId = (Long) httpSession.getAttribute("userId");
 
         // Todo 엔터티 조회
+
         Optional<Todo> optionalTodo = todoRepositroy.findByIdAndUserId(todoId, userId);
 
         optionalTodo.ifPresent(todo -> {

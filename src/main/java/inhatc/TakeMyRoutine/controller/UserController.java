@@ -106,20 +106,17 @@ public class UserController {
         if(user == null) {
             bindingResult.reject("loginFail", "로그인 아이디 또는 비밀번호가 틀렸습니다.");
         }
-
         if(bindingResult.hasErrors()) {
             return "login";
         }
 
         // 로그인 성공 => 세션 생성
-
         // 세션을 생성하기 전에 기존의 세션 파기
         httpServletRequest.getSession().invalidate();
         HttpSession session = httpServletRequest.getSession(true);  // Session이 없으면 생성
         // 세션에 userId를 넣어줌
         session.setAttribute("userId", user.getId());
         session.setMaxInactiveInterval(1800); // Session이 30분동안 유지
-
         return "redirect:/home";
     }
 
