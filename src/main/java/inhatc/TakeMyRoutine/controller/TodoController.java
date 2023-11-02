@@ -62,13 +62,10 @@ public class TodoController {
         return "redirect:/home";
 
     }
-    //투두리스트는 선택할 수 있는 체크 박스 그리고 삭제할 수 있는 삭제 버튼 그리고
-    //캘린더 처럼 투두아이디랑 유저 아이디랑 비교를해서 이게 존재한다면 그 값을 바탕으로 수정 삭제 할 수 있는 기능
-// TodoController.java
 
 
     @PostMapping("/deleteTodos")
-    public ResponseEntity<String> completeTodos(@RequestBody Map<String, List<Long>> requestBody) {
+    public ResponseEntity<String> deleteTodo(@RequestBody Map<String, List<Long>> requestBody) {
         try {
             // 여러 아이디를 가진 todo들을 삭제
             List<Long> todoIds = requestBody.get("todoIds");
