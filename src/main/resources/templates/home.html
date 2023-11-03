@@ -12,48 +12,46 @@
 <body>
 <div th:include="navigation.html"></div>
 
-    <div class="row m-0">
-        <div class="col-md-5 pr-0">
-            <h3 class="text-center mb-4">Todo List</h3>
-            <div class="border p-3">
-                <button class="btn btn-success mb-3"
-                        th:onclick="|location.href='@{/{loginType}/todoInsert (loginType=${loginType})}'|">추가
-                </button>
-                <button class="btn btn-primary mb-3" onclick="openUpdateModal()">수정</button>
-                <!-- 완료 버튼에 onclick 이벤트 추가 -->
-                <button class="btn btn-danger mb-3" onclick="completeTodo()">완료</button>
+<div class="row m-0">
+    <div class="col-md-5 pr-0">
+        <h3 class="text-center mb-4">Todo List</h3>
+        <div class="border p-3">
+            <button class="btn btn-success mb-3"
+                    th:onclick="|location.href='@{/{loginType}/todoInsert (loginType=${loginType})}'|">추가
+            </button>
+            <button class="btn btn-primary mb-3" onclick="openUpdateModal()">수정</button>
+            <!-- 완료 버튼에 onclick 이벤트 추가 -->
+            <button class="btn btn-danger mb-3" onclick="completeTodo()">완료</button>
 
-                <table class="table table-striped p-0">
-                    <thead>
-                    <tr>
-                        <th>Select</th>
-                        <th>Title</th>
-                        <th>Memo</th>
-                        <th>Place</th>
-                        <th>Date and Time</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="todo : ${todoList}">
-                        <td>
-                            <input type="checkbox" class="select-checkbox" th:value="${todo.id}" />
-                        </td>
-                        <td th:text="${todo.title}"></td>
-                        <td th:text="${todo.memo}"></td>
-                        <td th:text="${todo.place}"></td>
-                        <td th:text="${todo.startTime}"></td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="col-md-7 pr-0">
-            <!-- 캘린더 영역 -->
-            <div th:include="calendar.html"></div>
+            <table class="table table-striped p-0">
+                <thead>
+                <tr>
+                    <th>Select</th>
+                    <th>Title</th>
+                    <th>Memo</th>
+                    <th>Place</th>
+                    <th>Date and Time</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="todo : ${todoList}">
+                    <td>
+                        <input type="checkbox" class="select-checkbox" th:value="${todo.id}"/>
+                    </td>
+                    <td th:text="${todo.title}"></td>
+                    <td th:text="${todo.memo}"></td>
+                    <td th:text="${todo.place}"></td>
+                    <td th:text="${todo.startTime}"></td>
+                </tr>
+                </tbody>
+            </table>
         </div>
     </div>
-
-
+    <div class="col-md-7 pr-0">
+        <!-- 캘린더 영역 -->
+        <div th:include="calendar.html"></div>
+    </div>
+</div>
 
 
 <!-- 모달 창 -->
@@ -94,47 +92,46 @@
 </div>
 </body>
 <script>
+    // 문서 로딩 후 실행될 코드
+    $(document).ready(function () {
+        // 체크박스 변경 시 이벤트 리스너 추가
+        $('.select-checkbox').on('change', function () {
+            updateButtonState();
+        });
+    });
+
     function updateButtonState() {
         var selectedIds = document.querySelectorAll('.select-checkbox:checked');
         var updateButton = document.querySelector('.btn-primary');
 
-        if (selectedIds.length === 1) {
-            updateButton.disabled = false;
-            selectedTodoId = selectedIds[0].value;
-        } else {
+        if (selectedIds.length >= 2) {
             updateButton.disabled = true;
-        }
-    }
-    function completeTodo() {
-        var selectedIds = document.querySelectorAll('.select-checkbox:checked');
-
-        if (selectedIds.length === 0) {
-            alert('선택된 항목이 없습니다.');
+            selectedTodoId = null; // 선택된 Todo가 없을 경우 selectedTodoId 초기화
         } else {
-            if (confirm('선택된 항목을 완료하시겠습니까?')) {
-                var todoIds = Array.from(selectedIds).map(function (checkbox) {
-                    return checkbox.value;
-                });
-
-                $.ajax({
-                    type: 'POST',
-                    url: '/home/deleteTodos',
-                    contentType: 'application/json',
-                    data: JSON.stringify({todoIds: todoIds}),
-                    success: function (response) {
-                        console.log(response);
-                        location.reload();
-                    },
-                    error: function (error) {
-                        console.log(error.responseText);
-                        alert('서버 오류가 발생했습니다.');
-                    }
-                });
-            }
+            updateButton.disabled = false;
+            selectedTodoId = selectedIds.length === 1 ? selectedIds[0].value : null;
         }
     }
+
 
     var selectedTodoId;
+
+    function findTodoById(selectedTodoId) {
+        // 여기에 실제 데이터에서 Todo를 찾는 로직을 추가해야 해.
+        // 예를 들어, todoList 배열에서 해당 ID에 맞는 Todo를 찾을 수 있어.
+        // 여기서는 간단한 예시로 빈 배열을 리턴하도록 해보자.
+        var todoList = [];
+
+        for (var i = 0; i < todoList.length; i++) {
+            if (todoList[i].id === selectedTodoId) {
+                return todoList[i];
+            }
+        }
+
+        // 해당 ID에 맞는 Todo를 찾지 못한 경우
+        return undefined;
+    }
+
 
     function openUpdateModal() {
         updateButtonState();  // 모달 열기 전에 상태 업데이트
@@ -175,29 +172,51 @@
         }
 
         // 서버로 수정된 Todo 전송 (Ajax 또는 폼 제출 방식으로)
-        $.ajax({
-            type: 'POST',
-            url: '/home/updateTodo',
-            contentType: 'application/json',
-            data: JSON.stringify({
-                todoId: selectedTodoId,
-                updatedTitle: updatedTitle,
-                updatedMemo: updatedMemo,
-                updatedPlace: updatedPlace,
-                updatedDateTime: updatedDateTime  // 시간 값을 전송
-            }),
-            success: function (response) {
+        // Axios로 변경된 코드
+        axios.post('/home/updateTodo', {
+            todoId: selectedTodoId,
+            updatedTitle: updatedTitle,
+            updatedMemo: updatedMemo,
+            updatedPlace: updatedPlace,
+            updatedDateTime: updatedDateTime
+        })
+            .then(function (response) {
                 console.log(response);
                 location.reload();
-            },
-            error: function (error) {
-                console.log(error.responseText);
+            })
+            .catch(function (error) {
+                console.log(error.response.data);
                 alert('서버 오류가 발생했습니다.');
-            }
-        });
+            });
 
         // 모달 닫기
         $('#updateModal').modal('hide');
+    }
+
+    function completeTodo() {
+        var selectedIds = document.querySelectorAll('.select-checkbox:checked');
+
+        if (selectedIds.length === 0) {
+            alert('선택된 항목이 없습니다.');
+        } else {
+            if (confirm('선택된 항목을 완료하시겠습니까?')) {
+                var todoIds = Array.from(selectedIds).map(function (checkbox) {
+                    return checkbox.value;
+                });
+
+                // Axios로 변경된 코드
+                axios.post('/home/deleteTodos', {todoIds: todoIds}, {headers: {'Content-Type': 'application/json'}})
+                    .then(function (response) {
+                        console.log(response);
+                        location.reload();
+                    })
+                    .catch(function (error) {
+                        console.log(error.response.data);
+                        alert('서버 오류가 발생했습니다.');
+                    });
+
+            }
+        }
     }
 
 
