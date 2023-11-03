@@ -128,7 +128,11 @@ public class TodoService {
             todoRepositroy.save(todo);
         });
     }
-
+    public void deleteEvent(Long todoId, Long userId) {
+        // 여기에 데이터베이스에서 이벤트를 삭제하는 로직을 추가
+        // 예를 들어,
+        todoRepositroy.deleteByIdAndUserId(todoId, userId);
+    }
 
 
 

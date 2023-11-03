@@ -92,9 +92,6 @@ public class CalendarController {
 
         // 'time' 파라미터를 LocalDateTime으로 파싱
         LocalDateTime dateTime = LocalDateTime.parse(time, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"));
-
-
-
         // 여기서 받은 값들과 user ID를 이용해서 이벤트를 추가하는 로직을 작성
         // 서비스나 레포지토리 클래스를 통해 데이터베이스에 저장하는 방식을 사용할 수 있어
 
@@ -104,10 +101,15 @@ public class CalendarController {
         return "Event added successfully!";
     }
 
-    @PutMapping("/updateEvent")
-    public ResponseEntity<String> updateEvent(@RequestBody Map<String, Object> requestBody,HttpSession session) {
+    @PutMapping("/calendar/updateEvent")
+    public ResponseEntity<String> updateEvent(@RequestBody Map<String, Object> requestBody, HttpSession session) {
         try {
-            Long todoId = getLongFromObject(requestBody.get("todoId"));
+
+            // requestBody.get("todoId")에서 반환되는 값의 타입이 String이라고 가정합니다.
+            String todoIdString = (String) requestBody.get("todoId");
+            Long todoId = Long.valueOf(todoIdString);
+
+
             String title = (String) requestBody.get("title");
             String dateStr = (String) requestBody.get("date");
             LocalDateTime updatedDateTime = LocalDateTime.parse(dateStr);
@@ -125,19 +127,16 @@ public class CalendarController {
         }
     }
 
-    // 이 메서드는 Object를 Long으로 변환하는 유틸리티 메서드입니다.
-    private Long getLongFromObject(Object value) {
-        if (value instanceof Long) {
-            return (Long) value;
-        } else if (value instanceof Integer) {
-            return ((Integer) value).longValue();
-        } else {
-            throw new IllegalArgumentException("Invalid type for converting to Long");
+    @DeleteMapping("/calendar/deleteEvent")
+    public ResponseEntity<String> deleteEvent(@RequestParam Long todoId, HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+        try {
+            todoService.deleteEvent(todoId, userId);
+            return new ResponseEntity<>("Event deleted successfully", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error deleting event: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-
-
 
 }
 

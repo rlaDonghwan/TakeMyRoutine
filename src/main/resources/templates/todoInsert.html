@@ -54,9 +54,11 @@
 <script>
     function insertCurrentTime() {
         var currentDate = new Date();
-        var formattedDate = currentDate.toISOString().slice(0, 16);
+        var localDate = new Date(currentDate.getTime() - currentDate.getTimezoneOffset() * 60000);
+        var formattedDate = localDate.toISOString().slice(0, 16);
         document.getElementById('dateTimeInput').value = formattedDate;
     }
+
 </script>
 </body>
 </html>

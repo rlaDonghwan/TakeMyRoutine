@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
     <!-- Axios 및 FullCalendar 라이브러리 추가 -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js"></script>
@@ -17,6 +18,7 @@
             font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
             font-size: 14px;
         }
+
         #calendar {
             max-width: 1100px;
             margin: 40px auto;
@@ -48,7 +50,8 @@
                         <div class="input-group date">
                             <input type="datetime-local" class="form-control" id="eventTime" required>
                             <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" type="button" id="currentTimeButton">Now</button>
+                                <button class="btn btn-outline-secondary" type="button" id="currentTimeButton">Now
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -92,7 +95,9 @@
                         <div class="input-group date">
                             <input type="datetime-local" class="form-control" id="updateEventTime" required>
                             <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" type="button" id="updateCurrentTimeButton">Now</button>
+                                <button class="btn btn-outline-secondary" type="button" id="updateCurrentTimeButton">
+                                    Now
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -100,28 +105,12 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" id="deleteEventButton">Delete</button>
                 <button type="button" class="btn btn-primary" id="updateEventSaveButton">Save changes</button>
             </div>
         </div>
     </div>
 </div>
-
-<!-- 추가된 부분: Update 모달 Now 버튼 클릭 시 현재 시간 입력 -->
-<script>
-    $('#updateCurrentTimeButton').on('click', function () {
-        var now = new Date().toISOString().slice(0, 16);
-        $('#updateEventTime').val(now);
-    });
-</script>
-
-<!-- 추가된 부분: Update 모달 Save 버튼 클릭 시 이벤트 수정 -->
-<script>
-    // Update 모달 Save 버튼 클릭 시 이벤트 수정
-    $('#updateEventSaveButton').on('click', function () {
-        updateEvent();
-        $('#updateEventModal').modal('hide');
-    });
-</script>
 
 
 <!-- Bootstrap 및 FullCalendar 스크립트 추가 -->
@@ -129,9 +118,17 @@
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
 
+
 <!-- FullCalendar 스크립트 추가 -->
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+
+
+    // 함수로 userId 가져오기
+    function getUserId() {
+        return sessionStorage.getItem('userId');
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
         var calendarEl = document.getElementById('calendar');
 
         var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -139,7 +136,7 @@
             initialView: 'dayGridMonth',
             events: function (fetchInfo, successCallback, failureCallback) {
                 // Axios를 사용하여 Ajax 요청
-                axios.get('/home/calendar/events', {
+                axios.get('/home/calendar/events', { //이벤트 추가
                     params: {
                         start: fetchInfo.startStr,
                         end: fetchInfo.endStr
@@ -158,18 +155,16 @@
             },
             editable: true,
             selectable: true,
-            dateClick: function(info) {
+            dateClick: function (info) {
                 // 날짜를 클릭할 때의 동작
-                // 여기에 모달을 띄우는 코드 추가
                 $('#eventModal').modal('show');
             },
-            eventClick: function(info) {
+            eventClick: function (info) {
                 // 이벤트를 클릭할 때의 동작
                 selectedEvent = info.event; // 클릭한 이벤트 저장
 
                 // 이벤트 수정 모달 띄우기
                 $('#updateEventModal').modal('show');
-
                 // 모달에 이벤트 정보 세팅
                 $('#updateEventTitle').val(selectedEvent.title);
                 $('#updateEventTime').val(selectedEvent.start.toISOString().slice(0, 16));
@@ -178,17 +173,7 @@
 
         calendar.render();
 
-        // 추가된 부분: Now 버튼 클릭 시 현재 시간 입력
-        $('#currentTimeButton').on('click', function () {
-            var now = new Date().toISOString().slice(0, 16);
-            $('#eventTime').val(now);
-        });
 
-        // 추가된 부분: Save 버튼 클릭 시 이벤트 추가
-        $('#saveButton').on('click', function () {
-            addEvent();
-            $('#eventModal').modal('hide');
-        });
     });
 
     // 추가된 부분: 이벤트 추가 함수
@@ -199,23 +184,16 @@
         var place = $('#eventPlace').val();
 
         // 'time' 값을 'date'로 변경하여 파라미터 추가
-
         var date = time.split('T')[0] + ' ' + time.split('T')[1] + ":00";
-
-
         // 'date' 문자열을 JavaScript Date 객체로 변환
         var jsDate = new Date(date);
-
         // LocalDateTime으로 변환
         var localDateTime = jsDate.toISOString().replace(/Z$/, '');
 
         // 함수로 userId 가져오기
         function getUserId() {
-            // Assuming you store the user ID in a session variable named 'userId'
-            // Adjust this based on how your server sets and manages session variables
             return sessionStorage.getItem('userId');
         }
-
 
         // Axios를 사용하여 서버에 이벤트 추가 요청
         axios.post('/home/calendar/addEvent', null, {
@@ -229,6 +207,7 @@
             }
         })
             .then(function (response) {
+                location.reload();
                 console.log('Event added successfully', response);
                 // FullCalendar 새로고침
                 calendar.refetchEvents();
@@ -239,26 +218,37 @@
             .catch(function (error) {
                 console.error('Error adding event', error);
             });
+
+
     }
+
+    // 추가된 부분: Now 버튼 클릭 시 현재 시간 입력
+    $('#currentTimeButton').on('click', function () {
+        var currentDate = new Date();
+        var localDate = new Date(currentDate.getTime() - currentDate.getTimezoneOffset() * 60000);
+        var formattedDate = localDate.toISOString().slice(0, 16);
+
+        // 사용자의 로컬 시간대에서 ISO 8601 형식의 값을 datetime-local 필드에 설정
+        $('#eventTime').val(formattedDate);
+    });
+
+
+    // 추가된 부분: Save 버튼 클릭 시 이벤트 추가
+    $('#saveButton').on('click', function () {
+        addEvent();
+        $('#eventModal').modal('hide');
+    });
+
     function updateEvent() {
         var title = $('#updateEventTitle').val();
         var time = $('#updateEventTime').val();
 
         // 'time' 값을 'date'로 변경하여 파라미터 추가
         var date = time.split('T')[0] + ' ' + time.split('T')[1] + ":00";
-
         // 'date' 문자열을 JavaScript Date 객체로 변환
         var jsDate = new Date(date);
-
         // LocalDateTime으로 변환
         var localDateTime = jsDate.toISOString().replace(/Z$/, '');
-
-        // 함수로 userId 가져오기
-        function getUserId() {
-            // Assuming you store the user ID in a session variable named 'userId'
-            // Adjust this based on how your server sets and manages session variables
-            return sessionStorage.getItem('userId');
-        }
 
         // 추가된 부분: 서버에 이벤트 수정 요청
         axios.put('/home/calendar/updateEvent', {
@@ -269,17 +259,64 @@
             userId: getUserId()  // 함수로 userId 추가
         })
             .then(function (response) {
-                console.log('Event updated successfully', response);
-                // FullCalendar 새로고침
-                calendar.refetchEvents();
-
-                // 화면 새로고침
                 location.reload();
+                console.log('Event updated successfully', response);
             })
             .catch(function (error) {
                 console.error('Error updating event', error);
             });
     }
+
+    // 추가된 부분: Update 모달 Now 버튼 클릭 시 현재 시간 입력
+    $('#updateCurrentTimeButton').on('click', function () {
+        var currentDate = new Date();
+        var localDate = new Date(currentDate.getTime() - currentDate.getTimezoneOffset() * 60000);
+        var formattedDate = localDate.toISOString().slice(0, 16);
+
+        // 사용자의 로컬 시간대에서 ISO 8601 형식의 값을 datetime-local 필드에 설정
+        $('#updateEventTime').val(formattedDate);
+    });
+
+
+    <!-- 추가된 부분: Update 모달 Save 버튼 클릭 시 이벤트 수정 -->
+
+    // Update 모달 Save 버튼 클릭 시 이벤트 수정
+    $('#updateEventSaveButton').on('click', function () {
+        updateEvent();
+        $('#updateEventModal').modal('hide');
+    });
+
+    // 추가된 부분: 이벤트 삭제 함수
+    function deleteEvent() {
+        // 함수로 userId 가져오기
+        function getUserId() {
+            return sessionStorage.getItem('userId');
+        }
+
+        // Axios를 사용하여 서버에 이벤트 삭제 요청
+        axios.delete('/home/calendar/deleteEvent', {
+            params: {
+                todoId: selectedEvent.id,
+                userId: getUserId()
+            }
+        })
+            .then(function (response) {
+                // 성공적으로 삭제된 경우의 동작
+                location.reload();
+                console.log('Event deleted successfully', response);
+            })
+            .catch(function (error) {
+                // 삭제 중 오류가 발생한 경우의 동작
+                console.error('Error deleting event', error);
+            });
+
+    }
+
+    // 추가된 부분: Update 모달 Delete 버튼 클릭 시 이벤트 삭제
+    $('#deleteEventButton').on('click', function () {
+        deleteEvent();
+        $('#updateEventModal').modal('hide');
+    });
 
 
 </script>

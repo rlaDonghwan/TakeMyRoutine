@@ -16,6 +16,9 @@ public interface TodoRepositroy extends JpaRepository<Todo, Long> {
     Optional<Todo> findByIdAndUserId(Long id, Long userId);
 
     List<Todo> findByStartTimeBetween(LocalDateTime start, LocalDateTime end);
+
+    void deleteByIdAndUserId(Long id, Long userId);
+
 }
 
 
