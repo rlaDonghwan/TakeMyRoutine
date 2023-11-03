@@ -18,10 +18,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -55,7 +52,15 @@ public class CalendarController {
 
     @GetMapping("/calendar/events")
     @ResponseBody
-    public List<Map<String, Object>> getEvents(@RequestParam String start, @RequestParam String end) {
+    public List<Map<String, Object>> getEvents(@RequestParam String start, @RequestParam String end, HttpSession session) {
+        // 세션에서 userId 가져오기
+        Long sessionUserId = (Long) session.getAttribute("userId");
+
+        // 세션이 없거나 userId가 없으면 빈 리스트 반환
+        if (sessionUserId == null) {
+            return Collections.emptyList();
+        }
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
         ZonedDateTime startDateUtc = ZonedDateTime.parse(start).withZoneSameInstant(ZoneId.of("UTC"));
@@ -64,7 +69,8 @@ public class CalendarController {
         ZonedDateTime startDateKST = startDateUtc.withZoneSameInstant(ZoneId.of("Asia/Seoul"));
         ZonedDateTime endDateKST = endDateUtc.withZoneSameInstant(ZoneId.of("Asia/Seoul"));
 
-        List<Todo> todos = todoService.getTodos(startDateKST.toLocalDateTime(), endDateKST.toLocalDateTime());
+        // userId를 이용하여 해당 유저의 이벤트만 가져오기
+        List<Todo> todos = todoService.getTodosByUserIdAndTime(sessionUserId, startDateKST.toLocalDateTime(), endDateKST.toLocalDateTime());
 
         return todos.stream()
                 .map(todo -> {
@@ -78,6 +84,7 @@ public class CalendarController {
                 })
                 .collect(Collectors.toList());
     }
+
 
     @PostMapping("/calendar/addEvent")
     @ResponseBody

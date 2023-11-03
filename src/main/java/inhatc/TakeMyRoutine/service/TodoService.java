@@ -53,6 +53,10 @@ public class TodoService {
         return todoRepositroy.findByUserId(userId);
     }
 
+    public List<Todo> getTodosByUserIdAndTime(Long userId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        return todoRepositroy.findByUserIdAndStartTimeBetween(userId, startDateTime, endDateTime);
+    }
+
     public void updateTodo(Long todoId, String updatedTitle, String updatedMemo, String updatedPlace, LocalDateTime updatedDateTime) {
         // 세션에서 userId 가져오기
         Long userId = (Long) httpSession.getAttribute("userId");

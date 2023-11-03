@@ -24,6 +24,10 @@ public class Todo {
     @JoinColumn(name = "user_id") // User와 연결되는 외래키
     private User user;  // User 엔터티와 연관
 
+    @ManyToOne
+    @JoinColumn(name = "routine_id")
+    private Routine routine;  // Routine 엔터티와 연관
+
     private String title; // 제목
 
     @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm")

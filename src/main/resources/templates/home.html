@@ -7,23 +7,23 @@
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
 <body>
 <div th:include="navigation.html"></div>
-<div class="container">
-    <div class="row">
-        <div class="col-md-8 offset-md-2">
+
+    <div class="row m-0">
+        <div class="col-md-5 pr-0">
             <h3 class="text-center mb-4">Todo List</h3>
             <div class="border p-3">
                 <button class="btn btn-success mb-3"
                         th:onclick="|location.href='@{/{loginType}/todoInsert (loginType=${loginType})}'|">추가
                 </button>
                 <button class="btn btn-primary mb-3" onclick="openUpdateModal()">수정</button>
-
                 <!-- 완료 버튼에 onclick 이벤트 추가 -->
                 <button class="btn btn-danger mb-3" onclick="completeTodo()">완료</button>
 
-                <table class="table table-striped">
+                <table class="table table-striped p-0">
                     <thead>
                     <tr>
                         <th>Select</th>
@@ -36,20 +36,26 @@
                     <tbody>
                     <tr th:each="todo : ${todoList}">
                         <td>
-                            <input type="checkbox" class="select-checkbox" th:value="${todo.id}"/>
+                            <input type="checkbox" class="select-checkbox" th:value="${todo.id}" />
                         </td>
                         <td th:text="${todo.title}"></td>
                         <td th:text="${todo.memo}"></td>
                         <td th:text="${todo.place}"></td>
                         <td th:text="${todo.startTime}"></td>
-
                     </tr>
                     </tbody>
                 </table>
             </div>
         </div>
+        <div class="col-md-7 pr-0">
+            <!-- 캘린더 영역 -->
+            <div th:include="calendar.html"></div>
+        </div>
     </div>
-</div>
+
+
+
+
 <!-- 모달 창 -->
 <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel"
      aria-hidden="true">

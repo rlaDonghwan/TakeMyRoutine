@@ -129,6 +129,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
+
         var calendarEl = document.getElementById('calendar');
 
         var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -218,9 +219,10 @@
             .catch(function (error) {
                 console.error('Error adding event', error);
             });
-
-
     }
+
+
+
 
     // 추가된 부분: Now 버튼 클릭 시 현재 시간 입력
     $('#currentTimeButton').on('click', function () {
