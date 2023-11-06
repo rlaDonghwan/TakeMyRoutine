@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/main.min.css">
 
+
+
     <!-- 기타 스타일 및 설정 -->
     <style>
         html, body {
@@ -127,16 +129,16 @@
     function getUserId() {
         return sessionStorage.getItem('userId');
     }
+    //-----------------------------------------------------------------------
+
 
     document.addEventListener('DOMContentLoaded', function () {
-
         var calendarEl = document.getElementById('calendar');
-
         var calendar = new FullCalendar.Calendar(calendarEl, {
             timeZone: 'UTC',
             initialView: 'dayGridMonth',
             events: function (fetchInfo, successCallback, failureCallback) {
-                // Axios를 사용하여 Ajax 요청
+                // Axios를 사용하여 데이터 베이스에 값을 불러옴
                 axios.get('/home/calendar/events', { //이벤트 추가
                     params: {
                         start: fetchInfo.startStr,
@@ -163,7 +165,6 @@
             eventClick: function (info) {
                 // 이벤트를 클릭할 때의 동작
                 selectedEvent = info.event; // 클릭한 이벤트 저장
-
                 // 이벤트 수정 모달 띄우기
                 $('#updateEventModal').modal('show');
                 // 모달에 이벤트 정보 세팅
@@ -171,19 +172,16 @@
                 $('#updateEventTime').val(selectedEvent.start.toISOString().slice(0, 16));
             }
         });
-
         calendar.render();
-
-
     });
+    //-------------------------------------------------------------------------------------------
 
-    // 추가된 부분: 이벤트 추가 함수
+    //이벤트 추가 함수
     function addEvent() {
         var title = $('#eventTitle').val();
         var time = $('#eventTime').val();
         var content = $('#eventContent').val();
         var place = $('#eventPlace').val();
-
         // 'time' 값을 'date'로 변경하여 파라미터 추가
         var date = time.split('T')[0] + ' ' + time.split('T')[1] + ":00";
         // 'date' 문자열을 JavaScript Date 객체로 변환
@@ -191,13 +189,13 @@
         // LocalDateTime으로 변환
         var localDateTime = jsDate.toISOString().replace(/Z$/, '');
 
-        // 함수로 userId 가져오기
+        // 세션으로 userId 가져오기
         function getUserId() {
             return sessionStorage.getItem('userId');
         }
 
         // Axios를 사용하여 서버에 이벤트 추가 요청
-        axios.post('/home/calendar/addEvent', null, {
+        axios.post('/home/calendar/addEvent', {
             params: {
                 title: title,
                 date: localDateTime,
@@ -208,13 +206,8 @@
             }
         })
             .then(function (response) {
-                location.reload();
+                location.reload(); //성공하면 화면 새로 고침
                 console.log('Event added successfully', response);
-                // FullCalendar 새로고침
-                calendar.refetchEvents();
-
-                // 화면 새로고침
-                location.reload();
             })
             .catch(function (error) {
                 console.error('Error adding event', error);

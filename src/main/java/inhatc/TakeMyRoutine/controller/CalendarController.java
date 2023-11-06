@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 @RequestMapping("/home")
 public class CalendarController {
 
-
     private final TodoService todoService;
 
     @GetMapping("/calendar")
@@ -60,12 +59,10 @@ public class CalendarController {
         if (sessionUserId == null) {
             return Collections.emptyList();
         }
-
+        //시작 시작 종료 시간의 포맷을 변경해주고 서울 시간으로 세팅해줌
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-
         ZonedDateTime startDateUtc = ZonedDateTime.parse(start).withZoneSameInstant(ZoneId.of("UTC"));
         ZonedDateTime endDateUtc = ZonedDateTime.parse(end).withZoneSameInstant(ZoneId.of("UTC"));
-
         ZonedDateTime startDateKST = startDateUtc.withZoneSameInstant(ZoneId.of("Asia/Seoul"));
         ZonedDateTime endDateKST = endDateUtc.withZoneSameInstant(ZoneId.of("Asia/Seoul"));
 
@@ -88,12 +85,7 @@ public class CalendarController {
 
     @PostMapping("/calendar/addEvent")
     @ResponseBody
-    public String addEvent(@RequestParam String title,
-                           @RequestParam String date,
-                           @RequestParam String time,
-                           @RequestParam String content,
-                           @RequestParam String place,
-                           HttpSession session) {
+    public String addEvent(@RequestParam String title, @RequestParam String time, @RequestParam String content, @RequestParam String place, HttpSession session) {
         // Retrieve user ID from the session
         Long userId = (Long) session.getAttribute("userId");
 
@@ -115,7 +107,6 @@ public class CalendarController {
             // requestBody.get("todoId")에서 반환되는 값의 타입이 String이라고 가정합니다.
             String todoIdString = (String) requestBody.get("todoId");
             Long todoId = Long.valueOf(todoIdString);
-
 
             String title = (String) requestBody.get("title");
             String dateStr = (String) requestBody.get("date");
