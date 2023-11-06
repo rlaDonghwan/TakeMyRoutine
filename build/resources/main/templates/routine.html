@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Routine List</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+    <!-- FullCalendar 스타일시트 및 스크립트 추가 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/fullcalendar.min.css"/>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/fullcalendar.min.js"></script>
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .todo-container {
+            margin-top: 50px;
+        }
+
+        .btn-container {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container todo-container">
+    <div class="row">
+        <div class="col-md-5">
+            <h3 class="text-center mb-4">Routine List</h3>
+            <div class="border p-3">
+                <div class="btn-container">
+                    <button class="btn btn-success" th:onclick="|location.href='@{/{loginType}/todoInsert (loginType=${loginType})}'|">추가</button>
+                    <button class="btn btn-primary ml-2" onclick="openUpdateModal()">수정</button>
+                    <button class="btn btn-danger ml-2" onclick="completeTodo()">완료</button>
+                    <!-- 공유하기 버튼 추가 -->
+                    <button class="btn btn-info ml-2" onclick="shareRoutine()">공유하기</button>
+                </div>
+
+                <!-- 나의 루틴 목록 테이블 -->
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Select</th>
+                        <th>Title</th>
+                        <th>Day of the Week</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- 임의의 데이터 추가 -->
+                    <tr th:each="todo : ${todoList}">
+                        <td>
+                            <input type="checkbox" class="select-checkbox" th:value="${todo.id}"/>
+                        </td>
+                        <td th:text="${todo.title}">운동</td>
+                        <td>
+                            <select class="form-control" th:id="${'daySelect' + todo.id}">
+                                <option value="MONDAY" th:selected="${todo.dayOfWeek == 'MONDAY'}">Monday</option>
+                                <option value="TUESDAY" th:selected="${todo.dayOfWeek == 'TUESDAY'}">Tuesday</option>
+                                <option value="WEDNESDAY" th:selected="${todo.dayOfWeek == 'WEDNESDAY'}">Wednesday</option>
+                                <option value="THURSDAY" th:selected="${todo.dayOfWeek == 'THURSDAY'}">Thursday</option>
+                                <option value="FRIDAY" th:selected="${todo.dayOfWeek == 'FRIDAY'}">Friday</option>
+                                <option value="SATURDAY" th:selected="${todo.dayOfWeek == 'SATURDAY'}">Saturday</option>
+                                <option value="SUNDAY" th:selected="${todo.dayOfWeek == 'SUNDAY'}">Sunday</option>
+                            </select>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 공유 루틴 목록 테이블 -->
+        <div class="col-md-5 ml-auto">
+            <h3 class="text-center mb-4">Share Routine List</h3>
+            <div class="border p-3">
+                <div class="btn-container">
+                    <!-- 다운로드하기 버튼 추가 -->
+                    <button class="btn btn-success" onclick="downloadRoutine()">다운로드하기</button>
+                    <button class="btn btn-info ml-2" onclick="openViewRoutineModal()">루틴 확인하기</button>
+                </div>
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Select</th>
+                        <th>User</th>
+                        <th>Title</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- 임의의 데이터 추가 -->
+                    <tr th:each="sharedRoutine : ${sharedRoutineList}">
+                        <td>
+                            <input type="checkbox" class="select-checkbox" th:value="${sharedRoutine.id}"/>
+                        </td>
+                        <td th:text="${sharedRoutine.user}">user123</td>
+                        <td th:text="${sharedRoutine.title}">운동 루틴</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 루틴 확인하기 버튼 추가 -->
+
+
+<!-- 모달 창 -->
+<div class="modal fade" id="viewRoutineModal" tabindex="-1" role="dialog" aria-labelledby="viewRoutineModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewRoutineModalLabel">View Routine</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="fullCalendar"></div>
+                <!-- 추가된 버튼 -->
+                <button class="btn btn-primary mt-2" onclick="downloadRoutine()">다운로드</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FullCalendar 스크립트 초기화 -->
+<script>
+    $(document).ready(function () {
+        // FullCalendar 초기화
+        $('#fullCalendar').fullCalendar({
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'listDay,listWeek,month'
+            },
+            defaultView: 'listWeek',  // 초기에 List Week View로 표시
+            events: [
+                // 여기에 루틴에 해당하는 이벤트 데이터를 동적으로 추가해야 합니다.
+                // 예: { title: '운동', start: '2023-11-04T12:00:00', end: '2023-11-04T13:00:00' }
+            ],
+        });
+    });
+
+    // 모달 열기 함수
+    function openViewRoutineModal() {
+        // TODO: 선택된 루틴의 데이터를 FullCalendar에 추가하는 로직 작성
+
+        // 모달 열기
+        $('#viewRoutineModal').modal('show');
+    }
+
+    // 다운로드 함수
+    function downloadRoutine() {
+        // TODO: 선택된 루틴의 데이터를 다운로드하는 로직 작성
+        alert('루틴을 다운로드합니다.');
+    }
+
+    // 모달 열기 함수
+    function openViewRoutineModal() {
+        // TODO: 선택된 루틴의 데이터를 FullCalendar에 추가하는 로직 작성
+
+        // 모달 열기
+        $('#viewRoutineModal').modal('show');
+    }
+<script>
+    function shareRoutine() {
+        // TODO: 선택된 루틴을 공유 루틴 목록으로 이동시키는 로직 작성
+    }
+
+    function downloadRoutine() {
+        // TODO: 선택된 루틴을 다운로드하는 로직 작성
+    }
+</script>
+
+</body>
+</html>
