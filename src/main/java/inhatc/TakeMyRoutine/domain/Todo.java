@@ -25,8 +25,8 @@ public class Todo {
     private User user;  // User 엔터티와 연관
 
     @ManyToOne
-    @JoinColumn(name = "routine_id")
-    private Routine routine;  // Routine 엔터티와 연관
+    @JoinColumn(name = "group_id")
+    private TodoGroup todoGroup;  // TodoGroup 엔터티와 연관
 
     private String title; // 제목
 
@@ -39,4 +39,6 @@ public class Todo {
     private String memo; // 내용
 
     private String place; // 약속 장소
+
 }
+

@@ -3,6 +3,8 @@ package inhatc.TakeMyRoutine.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Builder
 @Getter
@@ -23,4 +25,8 @@ public class User {
     @Column(nullable = false, unique = true)
     private String nickname;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<TodoGroup> todoGroups;
+
 }
+

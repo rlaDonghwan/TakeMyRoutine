@@ -32,7 +32,9 @@
             <h3 class="text-center mb-4">Routine List</h3>
             <div class="border p-3">
                 <div class="btn-container">
-                    <button class="btn btn-success" th:onclick="|location.href='@{/{loginType}/todoInsert (loginType=${loginType})}'|">추가</button>
+                    <button class="btn btn-success"
+                            th:onclick="|location.href='@{/{loginType}/todoInsert (loginType=${loginType})}'|">추가
+                    </button>
                     <button class="btn btn-primary ml-2" onclick="openUpdateModal()">수정</button>
                     <button class="btn btn-danger ml-2" onclick="completeTodo()">완료</button>
                     <!-- 공유하기 버튼 추가 -->
@@ -45,27 +47,16 @@
                     <tr>
                         <th>Select</th>
                         <th>Title</th>
-                        <th>Day of the Week</th>
+                        <th>Category</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <!-- 임의의 데이터 추가 -->
-                    <tr th:each="todo : ${todoList}">
+                    <tr th:each="todoGroup : ${todoGroups}">
                         <td>
-                            <input type="checkbox" class="select-checkbox" th:value="${todo.id}"/>
+                            <input type="checkbox" class="select-checkbox" th:value="${todoGroup.id}"/>
                         </td>
-                        <td th:text="${todo.title}">운동</td>
-                        <td>
-                            <select class="form-control" th:id="${'daySelect' + todo.id}">
-                                <option value="MONDAY" th:selected="${todo.dayOfWeek == 'MONDAY'}">Monday</option>
-                                <option value="TUESDAY" th:selected="${todo.dayOfWeek == 'TUESDAY'}">Tuesday</option>
-                                <option value="WEDNESDAY" th:selected="${todo.dayOfWeek == 'WEDNESDAY'}">Wednesday</option>
-                                <option value="THURSDAY" th:selected="${todo.dayOfWeek == 'THURSDAY'}">Thursday</option>
-                                <option value="FRIDAY" th:selected="${todo.dayOfWeek == 'FRIDAY'}">Friday</option>
-                                <option value="SATURDAY" th:selected="${todo.dayOfWeek == 'SATURDAY'}">Saturday</option>
-                                <option value="SUNDAY" th:selected="${todo.dayOfWeek == 'SUNDAY'}">Sunday</option>
-                            </select>
-                        </td>
+                        <td th:text="${todoGroup.groupName}"></td>
+                        <td th:text="${todoGroup.category}"></td>
                     </tr>
                     </tbody>
                 </table>
@@ -104,11 +95,10 @@
         </div>
     </div>
 </div>
-<!-- 루틴 확인하기 버튼 추가 -->
-
 
 <!-- 모달 창 -->
-<div class="modal fade" id="viewRoutineModal" tabindex="-1" role="dialog" aria-labelledby="viewRoutineModalLabel" aria-hidden="true">
+<div class="modal fade" id="viewRoutineModal" tabindex="-1" role="dialog" aria-labelledby="viewRoutineModalLabel"
+     aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -126,23 +116,7 @@
     </div>
 </div>
 
-<!-- FullCalendar 스크립트 초기화 -->
 <script>
-    $(document).ready(function () {
-        // FullCalendar 초기화
-        $('#fullCalendar').fullCalendar({
-            header: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'listDay,listWeek,month'
-            },
-            defaultView: 'listWeek',  // 초기에 List Week View로 표시
-            events: [
-                // 여기에 루틴에 해당하는 이벤트 데이터를 동적으로 추가해야 합니다.
-                // 예: { title: '운동', start: '2023-11-04T12:00:00', end: '2023-11-04T13:00:00' }
-            ],
-        });
-    });
 
     // 모달 열기 함수
     function openViewRoutineModal() {
@@ -165,12 +139,13 @@
         // 모달 열기
         $('#viewRoutineModal').modal('show');
     }
-<script>
-    function shareRoutine() {
+
+    <script>
+        function shareRoutine() {
         // TODO: 선택된 루틴을 공유 루틴 목록으로 이동시키는 로직 작성
     }
 
-    function downloadRoutine() {
+        function downloadRoutine() {
         // TODO: 선택된 루틴을 다운로드하는 로직 작성
     }
 </script>

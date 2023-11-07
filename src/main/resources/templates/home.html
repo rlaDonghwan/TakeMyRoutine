@@ -25,7 +25,7 @@
 
             <button class="btn btn-danger mb-3" onclick="completeTodo()">완료</button>
 
-            <button class="btn btn-success mb-3" onclick="addRoutine()">루틴 공유</button>
+            <button class="btn btn-success mb-3" id="groupBtn" onclick="openGroupModal()">루틴 그룹화</button>
 
             <table class="table table-striped p-0">
                 <thead>
@@ -58,8 +58,8 @@
 </div>
 <!--------------------------------------------------------------------------->
 
-<!-- 모달 창 -->
-<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel"
+<!-- 업데이트 모달 창 -->
+<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="openUpdateModal"
      aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -96,6 +96,39 @@
 </div>
 <!--------------------------------------------------------------------------->
 
+<!-- 공유 모달 창 -->
+<div class="modal fade" id="openGroupModal" tabindex="-1" role="dialog" aria-labelledby="openGroupModal"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="openGroupModalLabel">Share Routine</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- 루틴 정보 입력 폼 -->
+                <form id="routineForm">
+                    <div class="form-group">
+                        <label for="routineTitle">루틴 이름</label>
+                        <input type="text" class="form-control" id="routineTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="routineCategory">루틴 종류(카테고리)</label>
+                        <input type="text" class="form-control" id="routineCategory" required>
+                    </div>
+                    <!-- 선택된 Todo들의 ID를 담을 hidden input 추가 -->
+                    <input type="hidden" id="selectedTodoIds" th:value="${selectedTodoIds}"/>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="insetGroup()">그룹</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
 <script>
     // 문서 로딩 후 실행될 코드
@@ -103,7 +136,9 @@
         // 체크박스 변경 시 이벤트 리스너 추가
         $('.select-checkbox').on('change', function () {
             updateButtonState();
+            groupButtonState();
         });
+        groupButtonState();
     });
     //---------------------------------------------------------------------------------
 
@@ -120,11 +155,13 @@
             selectedTodoId = selectedIds.length === 1 ? selectedIds[0].value : null;
         }
     }
+
     //---------------------------------------------------------------------------------
 
 
     // Todo를 실제 데이터에서 찾는 함수
     var selectedTodoId;
+
     function findTodoById(selectedTodoId) {
         // 여기에 실제 데이터에서 Todo를 찾는 로직을 추가해야 해.
         // 예를 들어, todoList 배열에서 해당 ID에 맞는 Todo를 찾을 수 있어.
@@ -140,6 +177,7 @@
         // 해당 ID에 맞는 Todo를 찾지 못한 경우
         return undefined;
     }
+
     //------------------------------------------------------------------------------------------------
 
     //수정 버튼을 누르면 값을 모달 창을 띄워줌
@@ -165,6 +203,7 @@
             alert('수정할 항목을 선택해주세요.');
         }
     }
+
     //------------------------------------------------------------------------------------------------
 
 
@@ -203,6 +242,7 @@
         // 모달 닫기
         $('#updateModal').modal('hide');
     }
+
     //------------------------------------------------------------------------------------------------
 
     //완료 버튼을 누르면 리스트에서 값을 삭제하는 함수
@@ -231,14 +271,69 @@
             }
         }
     }
+
     //------------------------------------------------------------------------------------------------
 
+    function groupButtonState() {
+        var selectedIds = document.querySelectorAll('.select-checkbox:checked');
+        var groupButton = document.querySelector('#groupBtn');
 
-    //루틴추가 버튼을 누르면 루틴 리스트로 값이 넘어가게 할 함수
-    function addRoutine(){
-
-
+        if (selectedIds.length < 2) {
+            groupButton.disabled = true;
+        } else {
+            groupButton.disabled = false;
+        }
     }
+
+    // 루틴을 공유하는 함수
+    function openGroupModal() {
+        // 선택된 todoId들 가져오기
+        var selectedIds = document.querySelectorAll('.select-checkbox:checked');
+        var todoIds = Array.from(selectedIds).map(function (checkbox) {
+            return checkbox.value;
+        });
+
+        // 선택된 Todo들의 ID를 hidden input에 설정
+        document.getElementById('selectedTodoIds').value = todoIds.join(',');
+
+        // 모달 열기
+        $('#openGroupModal').modal('show');
+    }
+
+    function insetGroup() {
+        // 선택된 Todo들의 ID를 hidden input에서 가져오기
+        var selectedTodoIds = document.getElementById('selectedTodoIds').value.split(',');
+
+        // 나머지 코드는 그대로 유지
+        var routineTitle = $('#routineTitle').val();
+        var routineCategory = $('#routineCategory').val();
+
+        // 입력값이 비어있는지 확인
+        if (!routineTitle || !routineCategory) {
+            alert('모든 값을 입력하세요.');
+            return;
+        }
+
+        // 서버에 루틴 정보를 공유하는 요청을 보냄
+        axios.post('/home/insetGroup', {
+            todoIds: selectedTodoIds,
+            routineTitle: routineTitle,
+            routineCategory: routineCategory,
+        })
+            .then(function (response) {
+                console.log(response);
+                // 새로운 루틴 목록으로 리로드
+                location.reload();
+            })
+            .catch(function (error) {
+                console.log(error.response.data);
+                alert('서버 오류가 발생했습니다.');
+            });
+
+        // 모달 닫기
+        $('#openGroupModal').modal('hide');
+    }
+
 
 </script>
 
