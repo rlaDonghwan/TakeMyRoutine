@@ -168,10 +168,10 @@
     }
     //---------------------------------------------------------------------------------
 
+    // 그룹을 수정하는 함수
     function updateGroup() {
         var updatedGroupName = document.getElementById('updateGroupName').value;
         var updatedGroupCategory = document.getElementById('updateGroupCategory').value;
-
 
         // 입력값이 비어있는지와 그룹 아이디가 있는지 확인
         if (!updatedGroupName || !updatedGroupCategory || !selectedGroupId) {
@@ -198,7 +198,9 @@
         // 모달 닫기
         $('#updateGroupModal').modal('hide');
     }
+    //---------------------------------------------------------------------------------
 
+    //그룹을 삭제하는 함수
     function deleteGroup(){
         var selectedIds = document.querySelectorAll('.select-checkbox:checked');
 
@@ -223,7 +225,7 @@
             }
         }
     }
-
+    //---------------------------------------------------------------------------------
 
 </script>
 

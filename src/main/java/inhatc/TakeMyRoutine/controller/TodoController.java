@@ -1,9 +1,12 @@
 package inhatc.TakeMyRoutine.controller;
 
+import inhatc.TakeMyRoutine.domain.GroupList;
 import inhatc.TakeMyRoutine.domain.Todo;
 import inhatc.TakeMyRoutine.domain.TodoGroup;
 import inhatc.TakeMyRoutine.domain.User;
 import inhatc.TakeMyRoutine.dto.TodoRequest;
+import inhatc.TakeMyRoutine.repository.GroupListRepository;
+import inhatc.TakeMyRoutine.repository.TodoGroupRepository;
 import inhatc.TakeMyRoutine.service.TodoGroupService;
 import inhatc.TakeMyRoutine.service.TodoService;
 import inhatc.TakeMyRoutine.service.UserService;
@@ -22,10 +25,7 @@ import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -37,7 +37,10 @@ public class TodoController {
     private final TodoService todoService;
     private final TodoGroupService todoGroupService;
     private final HttpSession httpSession;
+    private final TodoGroupRepository todoGroupRepository;
+    private final GroupListRepository groupListRepository;
 
+    //투두리스트 입력창 들어가는 컨트롤러
     @GetMapping("/todoInsert")
     public String todoPage(Model model, HttpSession session) {
         model.addAttribute("loginType", "home");
@@ -55,8 +58,9 @@ public class TodoController {
         model.addAttribute("todoRequest", new TodoRequest(userId));
         return "todoInsert";
     }
+    //-------------------------------------------------------------------------------------------------
 
-
+    //투두리스트 추가 버튼을 누르면 실행되는 컨트롤러
     @PostMapping("/todoInsert")
     public String todoInsert(@Valid @ModelAttribute TodoRequest todoRequest, Model model) {
         model.addAttribute("loginType", "home");
@@ -66,10 +70,10 @@ public class TodoController {
 
         todoService.join(todoRequest);
         return "redirect:/home";
-
     }
+    //-------------------------------------------------------------------------------------------------
 
-
+    //투두리스트를 수정하는 컨트롤러
     @PostMapping("/updateTodo")
     public ResponseEntity<String> updateTodos(@RequestBody Map<String, Object> requestBody) {
         try {
@@ -90,7 +94,9 @@ public class TodoController {
             return new ResponseEntity<>("Failed to update todo", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    //-------------------------------------------------------------------------------------------------
 
+    //투두리스트 삭제하는 컨트롤러
     @PostMapping("/deleteTodos")
     public ResponseEntity<String> deleteTodo(@RequestBody Map<String, List<Long>> requestBody) {
         try {
@@ -105,6 +111,8 @@ public class TodoController {
             return new ResponseEntity<>("Failed to complete todos", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    //-------------------------------------------------------------------------------------------------
 
     private LocalDateTime getLocalDateTimeFromObject(Object value) {
         if (value instanceof String) {
@@ -124,6 +132,7 @@ public class TodoController {
         }
     }
 
+    //투두 리스트를 그룹화 하는 컨트롤러
     @PostMapping("/insertGroup")
     @ResponseBody
     public List<Map<String, Object>> insertGroup(@RequestBody Map<String, Object> requestBody, HttpSession session) {
@@ -152,6 +161,6 @@ public class TodoController {
                 })
                 .collect(Collectors.toList());
     }
-
+    //-------------------------------------------------------------------------------------------------
 
 }
