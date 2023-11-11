@@ -86,15 +86,10 @@ public class CalendarController {
     @PostMapping("/calendar/addEvent")
     @ResponseBody
     public String addEvent(@RequestParam String title, @RequestParam String time, @RequestParam String content, @RequestParam String place, HttpSession session) {
-        // Retrieve user ID from the session
         Long userId = (Long) session.getAttribute("userId");
 
-        // 'time' 파라미터를 LocalDateTime으로 파싱
         LocalDateTime dateTime = LocalDateTime.parse(time, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"));
-        // 여기서 받은 값들과 user ID를 이용해서 이벤트를 추가하는 로직을 작성
-        // 서비스나 레포지토리 클래스를 통해 데이터베이스에 저장하는 방식을 사용할 수 있어
 
-        // 예시: TodoService 클래스를 사용하여 Todo를 생성하는 메소드 호출
         todoService.addEvent(userId, title, dateTime, content, place);
 
         return "Event added successfully!";
@@ -104,7 +99,6 @@ public class CalendarController {
     public ResponseEntity<String> updateEvent(@RequestBody Map<String, Object> requestBody, HttpSession session) {
         try {
 
-            // requestBody.get("todoId")에서 반환되는 값의 타입이 String이라고 가정합니다.
             String todoIdString = (String) requestBody.get("todoId");
             Long todoId = Long.valueOf(todoIdString);
 

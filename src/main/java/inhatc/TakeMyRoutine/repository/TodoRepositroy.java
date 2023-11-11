@@ -1,6 +1,7 @@
 package inhatc.TakeMyRoutine.repository;
 
 import inhatc.TakeMyRoutine.domain.Todo;
+import inhatc.TakeMyRoutine.domain.TodoGroup;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,9 +13,9 @@ import java.util.Optional;
 public interface TodoRepositroy extends JpaRepository<Todo, Long> {
 
     List<Todo> findByUserId(Long userId);
+    Optional<Todo> findById(Long todoId);
 
-    @Query("SELECT t FROM Todo t WHERE t.id IN :ids")
-    List<Todo> findAllByIds(@Param("ids") List<Todo> ids);
+
 
 
 

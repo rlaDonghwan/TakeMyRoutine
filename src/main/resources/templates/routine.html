@@ -3,12 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>Routine List</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/fullcalendar.min.js"></script>
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
     <!-- FullCalendar 스타일시트 및 스크립트 추가 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/fullcalendar.min.css"/>
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/fullcalendar.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+
 
     <style>
         body {
@@ -25,6 +30,7 @@
     </style>
 </head>
 <body>
+<div th:include="navigation.html"></div>
 
 <div class="container todo-container">
     <div class="row">
@@ -32,16 +38,10 @@
             <h3 class="text-center mb-4">Routine List</h3>
             <div class="border p-3">
                 <div class="btn-container">
-                    <button class="btn btn-success"
-                            th:onclick="|location.href='@{/{loginType}/todoInsert (loginType=${loginType})}'|">추가
-                    </button>
                     <button class="btn btn-primary ml-2" onclick="openUpdateModal()">수정</button>
-                    <button class="btn btn-danger ml-2" onclick="completeTodo()">완료</button>
-                    <!-- 공유하기 버튼 추가 -->
-                    <button class="btn btn-info ml-2" onclick="shareRoutine()">공유하기</button>
+                    <button class="btn btn-danger ml-2" onclick="deleteGroup()">삭제</button>
+                    <button class="btn btn-info ml-2" onclick="shareGroup()">공유하기</button>
                 </div>
-
-                <!-- 나의 루틴 목록 테이블 -->
                 <table class="table table-striped">
                     <thead>
                     <tr>
@@ -62,6 +62,39 @@
                 </table>
             </div>
         </div>
+
+
+        <!-- 그룹 수정 모달 창 -->
+        <div class="modal fade" id="updateGroupModal" tabindex="-1" role="dialog"
+             aria-labelledby="updateGroupModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="updateGroupModalLabel">그룹 수정</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="updateGroupForm">
+                            <div class="form-group">
+                                <label for="updateGroupName">그룹 이름</label>
+                                <input type="text" class="form-control" id="updateGroupName" name="updateGroupName"
+                                       required>
+                            </div>
+                            <div class="form-group">
+                                <label for="updateGroupCategory">카테고리</label>
+                                <input type="text" class="form-control" id="updateGroupCategory"
+                                       name="updateGroupCategory" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" onclick="updateGroup()">수정</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
         <!-- 공유 루틴 목록 테이블 -->
         <div class="col-md-5 ml-auto">
@@ -96,59 +129,106 @@
     </div>
 </div>
 
-<!-- 모달 창 -->
-<div class="modal fade" id="viewRoutineModal" tabindex="-1" role="dialog" aria-labelledby="viewRoutineModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="viewRoutineModalLabel">View Routine</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div id="fullCalendar"></div>
-                <!-- 추가된 버튼 -->
-                <button class="btn btn-primary mt-2" onclick="downloadRoutine()">다운로드</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script>
+    var selectedGroupId;
+    // 문서 로딩 후 실행될 코드
+    $(document).ready(function () {
+        // 체크박스 변경 시 이벤트 리스너 추가
+        $('.select-checkbox').on('change', function () {
+            updateButtonState();
+        });
+    });
+    //---------------------------------------------------------------------------------
 
-    // 모달 열기 함수
-    function openViewRoutineModal() {
-        // TODO: 선택된 루틴의 데이터를 FullCalendar에 추가하는 로직 작성
+    // 선택이 여러 개 선택될 경우 수정 버튼을 비활성화 시키는 함수
+    function updateButtonState() {
+        var selectedIds = document.querySelectorAll('.select-checkbox:checked');
+        var updateButton = document.querySelector('.btn-primary');
 
-        // 모달 열기
-        $('#viewRoutineModal').modal('show');
+        if (selectedIds.length >= 2) {
+            updateButton.disabled = true;
+            selectedGroupId = null; // 선택된 Todo가 없을 경우 selectedTodoId 초기화
+        } else {
+            updateButton.disabled = false;
+            selectedGroupId = selectedIds.length === 1 ? selectedIds[0].value : null;
+        }
     }
+    //---------------------------------------------------------------------------------
 
-    // 다운로드 함수
-    function downloadRoutine() {
-        // TODO: 선택된 루틴의 데이터를 다운로드하는 로직 작성
-        alert('루틴을 다운로드합니다.');
+    //수정 모달을 띄워주는 함수
+    function openUpdateModal() {
+        updateButtonState();  // 모달 열기 전에 상태 업데이트
+
+        if (selectedGroupId) {
+            // 모달 열기
+            $('#updateGroupModal').modal('show');
+        }else {
+            alert('수정할 항목을 선택해주세요.');
+        }
     }
+    //---------------------------------------------------------------------------------
 
-    // 모달 열기 함수
-    function openViewRoutineModal() {
-        // TODO: 선택된 루틴의 데이터를 FullCalendar에 추가하는 로직 작성
+    // 그룹을 수정하는 함수
+    function updateGroup() {
+        var updatedGroupName = document.getElementById('updateGroupName').value;
+        var updatedGroupCategory = document.getElementById('updateGroupCategory').value;
 
-        // 모달 열기
-        $('#viewRoutineModal').modal('show');
+        // 입력값이 비어있는지와 그룹 아이디가 있는지 확인
+        if (!updatedGroupName || !updatedGroupCategory || !selectedGroupId) {
+            alert('그룹 이름과 카테고리를 모두 입력하세요.');
+            return;
+        }
+
+        // Axios를 사용하여 서버에 수정 요청 보내기
+        axios.put('/home/updateGroup', {
+            groupId: selectedGroupId,
+            updatedGroupName: updatedGroupName,
+            updatedGroupCategory: updatedGroupCategory
+        })
+            .then(function (response) {
+                console.log(response);
+                location.reload();
+                alert('그룹이 수정되었습니다.');
+            })
+            .catch(function (error) {
+                console.log(error.response.data);
+                alert('서버 오류가 발생했습니다.');
+            });
+
+        // 모달 닫기
+        $('#updateGroupModal').modal('hide');
     }
+    //---------------------------------------------------------------------------------
 
-    <script>
-        function shareRoutine() {
-        // TODO: 선택된 루틴을 공유 루틴 목록으로 이동시키는 로직 작성
-    }
+    //그룹을 삭제하는 함수
+    function deleteGroup(){
+        var selectedIds = document.querySelectorAll('.select-checkbox:checked');
 
-        function downloadRoutine() {
-        // TODO: 선택된 루틴을 다운로드하는 로직 작성
+        if (selectedIds.length === 0) {
+            alert('선택된 항목이 없습니다.');
+        } else {
+            if (confirm('선택된 항목을 완료하시겠습니까?')) {
+                var gorupId = Array.from(selectedIds).map(function (checkbox) {
+                    return checkbox.value;
+                });
+
+                axios.post('/home/deleteGroups', {groupId: gorupId}, {headers: {'Content-Type': 'application/json'}})
+                    .then(function (response) {
+                        console.log(response);
+                        location.reload();
+                    })
+                    .catch(function (error) {
+                        console.log(error.response.data);
+                        alert('서버 오류가 발생했습니다.');
+                    });
+
+            }
+        }
     }
+    //---------------------------------------------------------------------------------
+
 </script>
+
 
 </body>
 </html>

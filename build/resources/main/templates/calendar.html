@@ -38,7 +38,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Event Details</h5>
+                <h5 class="modal-title">일정 추가</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -46,11 +46,11 @@
             <div class="modal-body">
                 <form>
                     <div class="form-group">
-                        <label for="eventTitle">Title</label>
+                        <label for="eventTitle">제목</label>
                         <input type="text" class="form-control" id="eventTitle" required>
                     </div>
                     <div class="form-group">
-                        <label for="eventTime">Time</label>
+                        <label for="eventTime">시간</label>
                         <div class="input-group date">
                             <input type="datetime-local" class="form-control" id="eventTime" required>
                             <div class="input-group-append">
@@ -60,18 +60,18 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="eventContent">Content</label>
+                        <label for="eventContent">내용</label>
                         <textarea class="form-control" id="eventContent" required></textarea>
                     </div>
                     <div class="form-group">
-                        <label for="eventPlace">Place</label>
+                        <label for="eventPlace">장소</label>
                         <input type="text" class="form-control" id="eventPlace" required>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="saveButton">Save changes</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+                <button type="button" class="btn btn-primary" id="saveButton">추가</button>
             </div>
         </div>
     </div>
@@ -84,7 +84,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Update Event</h5>
+                <h5 class="modal-title">일정 수정</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -92,16 +92,16 @@
             <div class="modal-body">
                 <form>
                     <div class="form-group">
-                        <label for="updateEventTitle">Title</label>
+                        <label for="updateEventTitle">제목</label>
                         <input type="text" class="form-control" id="updateEventTitle" required>
                     </div>
                     <div class="form-group">
-                        <label for="updateEventTime">Time</label>
+                        <label for="updateEventTime">시간</label>
                         <div class="input-group date">
                             <input type="datetime-local" class="form-control" id="updateEventTime" required>
                             <div class="input-group-append">
                                 <button class="btn btn-outline-secondary" type="button" id="updateCurrentTimeButton">
-                                    Now
+                                    현재 시간
                                 </button>
                             </div>
                         </div>
@@ -109,9 +109,9 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-danger" id="deleteEventButton">Delete</button>
-                <button type="button" class="btn btn-primary" id="updateEventSaveButton">Save changes</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+                <button type="button" class="btn btn-danger" id="deleteEventButton">삭제</button>
+                <button type="button" class="btn btn-primary" id="updateEventSaveButton">저장</button>
             </div>
         </div>
     </div>
@@ -138,6 +138,7 @@
                     params: {
                         start: fetchInfo.startStr,
                         end: fetchInfo.endStr
+
                     }
                 })
                     .then(function (response) {

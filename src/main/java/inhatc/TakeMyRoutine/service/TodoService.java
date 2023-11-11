@@ -113,8 +113,6 @@ public class TodoService {
 
 
     public void updateEvent(Long todoId, String updatedTitle, LocalDateTime updatedDateTime, Long userId) {
-        // 세션에서 userId 가져오기 (여기서는 파라미터로 받아옴)
-        // Long userId = (Long) httpSession.getAttribute("userId");
 
         // Todo 엔터티 조회
         Optional<Todo> optionalTodo = todoRepositroy.findByIdAndUserId(todoId, userId);
@@ -133,8 +131,6 @@ public class TodoService {
         });
     }
     public void deleteEvent(Long todoId, Long userId) {
-        // 여기에 데이터베이스에서 이벤트를 삭제하는 로직을 추가
-        // 예를 들어,
         todoRepositroy.deleteByIdAndUserId(todoId, userId);
     }
 

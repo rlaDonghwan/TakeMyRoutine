@@ -6,7 +6,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </head>
 <body>
@@ -102,7 +101,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="openGroupModalLabel">Share Routine</h5>
+                <h5 class="modal-title" id="openGroupModalLabel">Group Todos</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -111,12 +110,12 @@
                 <!-- 루틴 정보 입력 폼 -->
                 <form id="routineForm">
                     <div class="form-group">
-                        <label for="routineTitle">루틴 이름</label>
-                        <input type="text" class="form-control" id="routineTitle" required>
+                        <label for="groupTitle">그룹 이름</label>
+                        <input type="text" class="form-control" id="groupTitle" required>
                     </div>
                     <div class="form-group">
-                        <label for="routineCategory">루틴 종류(카테고리)</label>
-                        <input type="text" class="form-control" id="routineCategory" required>
+                        <label for="groupCategory">그룹 종류</label>
+                        <input type="text" class="form-control" id="groupCategory" required>
                     </div>
                     <!-- 선택된 Todo들의 ID를 담을 hidden input 추가 -->
                     <input type="hidden" id="selectedTodoIds" th:value="${selectedTodoIds}"/>
@@ -131,6 +130,8 @@
 
 </body>
 <script>
+    var selectedTodoId;
+
     // 문서 로딩 후 실행될 코드
     $(document).ready(function () {
         // 체크박스 변경 시 이벤트 리스너 추가
@@ -155,30 +156,7 @@
             selectedTodoId = selectedIds.length === 1 ? selectedIds[0].value : null;
         }
     }
-
     //---------------------------------------------------------------------------------
-
-
-    // Todo를 실제 데이터에서 찾는 함수
-    var selectedTodoId;
-
-    function findTodoById(selectedTodoId) {
-        // 여기에 실제 데이터에서 Todo를 찾는 로직을 추가해야 해.
-        // 예를 들어, todoList 배열에서 해당 ID에 맞는 Todo를 찾을 수 있어.
-        // 여기서는 간단한 예시로 빈 배열을 리턴하도록 해보자.
-        var todoList = [];
-
-        for (var i = 0; i < todoList.length; i++) {
-            if (todoList[i].id === selectedTodoId) {
-                return todoList[i];
-            }
-        }
-
-        // 해당 ID에 맞는 Todo를 찾지 못한 경우
-        return undefined;
-    }
-
-    //------------------------------------------------------------------------------------------------
 
     //수정 버튼을 누르면 값을 모달 창을 띄워줌
     function openUpdateModal() {
@@ -187,26 +165,11 @@
         if (selectedTodoId) {
             // 모달 열기
             $('#updateModal').modal('show');
-
-            // 모달 내용 초기화 (예시: Todo의 값으로 초기화)
-            var selectedTodo = findTodoById(selectedTodoId);  // Todo를 실제 데이터에서 찾는 함수 사용
-            document.getElementById('updateTitle').value = selectedTodo.title;
-            document.getElementById('updateMemo').value = selectedTodo.memo;
-            document.getElementById('updatePlace').value = selectedTodo.place;
-
-            // 시간 값 초기화
-            var dateTime = selectedTodo.dateTime.split('T');
-            var date = dateTime[0];
-            var time = dateTime[1];
-            document.getElementById('updateDateTime').value = date + 'T' + time;
         } else {
             alert('수정할 항목을 선택해주세요.');
         }
     }
-
     //------------------------------------------------------------------------------------------------
-
-
     //모달창에서 입력한 값들을 데이터베이스로 보내주는 함수
     function updateTodo() {
         var updatedTitle = document.getElementById('updateTitle').value;
@@ -216,13 +179,12 @@
         // 시간 값 가져오기
         var updatedDateTime = document.getElementById('updateDateTime').value;
 
-        // 입력값이 비어있는지 확인
+        // 입력값이 비어있는지
         if (!updatedTitle || !updatedMemo || !updatedPlace || !updatedDateTime) {
             alert('모든 값을 입력하세요.');
             return;
         }
 
-        // Axios로 변경된 코드
         axios.post('/home/updateTodo', {
             todoId: selectedTodoId,
             updatedTitle: updatedTitle,
@@ -257,7 +219,6 @@
                     return checkbox.value;
                 });
 
-                // Axios로 변경된 코드
                 axios.post('/home/deleteTodos', {todoIds: todoIds}, {headers: {'Content-Type': 'application/json'}})
                     .then(function (response) {
                         console.log(response);
@@ -271,9 +232,10 @@
             }
         }
     }
-
     //------------------------------------------------------------------------------------------------
 
+
+    //그룹 버튼 상태 함수 그룹이 2개 이상 선택될 때만 활성화 됌
     function groupButtonState() {
         var selectedIds = document.querySelectorAll('.select-checkbox:checked');
         var groupButton = document.querySelector('#groupBtn');
@@ -284,11 +246,13 @@
             groupButton.disabled = false;
         }
     }
+    //------------------------------------------------------------------------------------------------
 
     // 루틴을 공유하는 함수
     function openGroupModal() {
         // 선택된 todoId들 가져오기
         var selectedIds = document.querySelectorAll('.select-checkbox:checked');
+
         var todoIds = Array.from(selectedIds).map(function (checkbox) {
             return checkbox.value;
         });
@@ -305,30 +269,28 @@
         var selectedTodoIds = document.getElementById('selectedTodoIds').value.split(',');
 
         // 나머지 코드는 그대로 유지
-        var routineTitle = $('#routineTitle').val();
-        var routineCategory = $('#routineCategory').val();
+        var groupTitle = $('#groupTitle').val();
+        var groupCategory = $('#groupCategory').val();
 
         // 입력값이 비어있는지 확인
-        if (!routineTitle || !routineCategory) {
+        if (!groupTitle || !groupCategory) {
             alert('모든 값을 입력하세요.');
             return;
         }
 
-        // 서버에 루틴 정보를 공유하는 요청을 보냄
-        axios.post('/home/insetGroup', {
-            todoIds: selectedTodoIds,
-            routineTitle: routineTitle,
-            routineCategory: routineCategory,
+        axios.post('/home/insertGroup', {
+            todoIds: selectedTodoIds.map(Number),
+            groupTitle: groupTitle,
+            groupCategory: groupCategory,
         })
-            .then(function (response) {
+                .then(function (response) {
                 console.log(response);
-                // 새로운 루틴 목록으로 리로드
-                location.reload();
             })
             .catch(function (error) {
                 console.log(error.response.data);
                 alert('서버 오류가 발생했습니다.');
             });
+
 
         // 모달 닫기
         $('#openGroupModal').modal('hide');

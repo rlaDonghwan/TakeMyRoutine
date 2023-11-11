@@ -23,10 +23,11 @@ public class TodoGroup {
     private User user;
 
     @OneToMany(mappedBy = "todoGroup", cascade = CascadeType.ALL)
-    private List<Todo> todos;
+    private List<GroupList> groupLists;
 
     private String groupName; // 그룹의 이름
 
     private String category; // 그룹의 카테고리
+
 
 }

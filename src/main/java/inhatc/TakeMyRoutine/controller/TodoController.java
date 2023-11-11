@@ -1,8 +1,10 @@
 package inhatc.TakeMyRoutine.controller;
 
 import inhatc.TakeMyRoutine.domain.Todo;
+import inhatc.TakeMyRoutine.domain.TodoGroup;
 import inhatc.TakeMyRoutine.domain.User;
 import inhatc.TakeMyRoutine.dto.TodoRequest;
+import inhatc.TakeMyRoutine.service.TodoGroupService;
 import inhatc.TakeMyRoutine.service.TodoService;
 import inhatc.TakeMyRoutine.service.UserService;
 import jakarta.validation.Valid;
@@ -20,8 +22,11 @@ import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 
@@ -30,6 +35,7 @@ import java.util.Map;
 @RequestMapping("/home")
 public class TodoController {
     private final TodoService todoService;
+    private final TodoGroupService todoGroupService;
     private final HttpSession httpSession;
 
     @GetMapping("/todoInsert")
@@ -64,21 +70,6 @@ public class TodoController {
     }
 
 
-    @PostMapping("/deleteTodos")
-    public ResponseEntity<String> deleteTodo(@RequestBody Map<String, List<Long>> requestBody) {
-        try {
-            // 여러 아이디를 가진 todo들을 삭제
-            List<Long> todoIds = requestBody.get("todoIds");
-            todoService.completeTodos(todoIds);
-
-            return new ResponseEntity<>("Completed successfully", HttpStatus.OK);
-        } catch (Exception e) {
-            // 예외 발생 시 로그 출력
-            e.printStackTrace();
-            return new ResponseEntity<>("Failed to complete todos", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
     @PostMapping("/updateTodo")
     public ResponseEntity<String> updateTodos(@RequestBody Map<String, Object> requestBody) {
         try {
@@ -100,6 +91,21 @@ public class TodoController {
         }
     }
 
+    @PostMapping("/deleteTodos")
+    public ResponseEntity<String> deleteTodo(@RequestBody Map<String, List<Long>> requestBody) {
+        try {
+            // 여러 아이디를 가진 todo들을 삭제
+            List<Long> todoIds = requestBody.get("todoIds");
+            todoService.completeTodos(todoIds);
+
+            return new ResponseEntity<>("Completed successfully", HttpStatus.OK);
+        } catch (Exception e) {
+            // 예외 발생 시 로그 출력
+            e.printStackTrace();
+            return new ResponseEntity<>("Failed to complete todos", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     private LocalDateTime getLocalDateTimeFromObject(Object value) {
         if (value instanceof String) {
             return LocalDateTime.parse((String) value);
@@ -118,12 +124,34 @@ public class TodoController {
         }
     }
 
+    @PostMapping("/insertGroup")
+    @ResponseBody
+    public List<Map<String, Object>> insertGroup(@RequestBody Map<String, Object> requestBody, HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
 
+        if (userId == null) {
+            return Collections.emptyList();
+        }
 
+        // requestBody에서 todoIds를 추출
+        List<Integer> todoIds = (List<Integer>) requestBody.get("todoIds");
+        List<Long> todoIdsLong = todoIds.stream().map(Long::valueOf).collect(Collectors.toList());
 
+        String groupTitle = (String) requestBody.get("groupTitle");
+        String groupCategory = (String) requestBody.get("groupCategory");
 
+        // userId를 이용하여 해당 유저의 이벤트만 가져오기
+        List<TodoGroup> todoGroups = todoGroupService.insertGroup(userId, todoIdsLong, groupTitle, groupCategory);
 
-
+        return todoGroups.stream()
+                .map(todoGroup -> {
+                    Map<String, Object> event = new HashMap<>();
+                    event.put("id", todoGroup.getId());
+                    event.put("title", todoGroup.getGroupName());
+                    return event;
+                })
+                .collect(Collectors.toList());
+    }
 
 
 }
