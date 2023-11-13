@@ -6,7 +6,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"></script>
-
 </head>
 <body>
 <!--네비게이션바 -->
@@ -156,6 +155,7 @@
             selectedTodoId = selectedIds.length === 1 ? selectedIds[0].value : null;
         }
     }
+
     //---------------------------------------------------------------------------------
 
     //수정 버튼을 누르면 값을 모달 창을 띄워줌
@@ -169,6 +169,7 @@
             alert('수정할 항목을 선택해주세요.');
         }
     }
+
     //------------------------------------------------------------------------------------------------
     //모달창에서 입력한 값들을 데이터베이스로 보내주는 함수
     function updateTodo() {
@@ -206,9 +207,7 @@
     }
 
     //------------------------------------------------------------------------------------------------
-
-    //완료 버튼을 누르면 리스트에서 값을 삭제하는 함수
-    function completeTodo() {
+    async function completeTodo() {
         var selectedIds = document.querySelectorAll('.select-checkbox:checked');
 
         if (selectedIds.length === 0) {
@@ -219,19 +218,67 @@
                     return checkbox.value;
                 });
 
-                axios.post('/home/deleteTodos', {todoIds: todoIds}, {headers: {'Content-Type': 'application/json'}})
-                    .then(function (response) {
-                        console.log(response);
-                        location.reload();
-                    })
-                    .catch(function (error) {
-                        console.log(error.response.data);
-                        alert('서버 오류가 발생했습니다.');
-                    });
-
+                try {
+                    // 그룹이 존재하는지 확인
+                    const response = await axios.post('/home/checkGroupExistence', {todoIds: todoIds}, {headers: {'Content-Type': 'application/json'}});
+                    var exists = response.data.exists;
+                    if (exists) {
+                        // 그룹이 존재하면 경고 표시
+                        if (confirm('투두리스트에 속한 그룹이 존재합니다. 그룹을 삭제하시겠습니까?')) {
+                            // 사용자가 확인하면 그룹 삭제
+                            await deleteGroup(todoIds);
+                        }
+                    } else {
+                        // 그룹이 존재하지 않으면 진행
+                        await deleteTodos(todoIds);
+                    }
+                } catch (error) {
+                    console.log(error.response.data);
+                    alert('서버 오류가 발생했습니다.');
+                }
             }
         }
     }
+
+    function deleteGroup(todoIds) {
+        axios.post('/home/deleteGroup', {todoIds: todoIds}, {headers: {'Content-Type': 'application/json'}})
+            .then(function (response) {
+                console.log(response);
+                location.reload();
+                // 그룹 삭제 후 투두리스트 삭제
+                deleteTodos(todoIds);
+            })
+            .catch(function (error) {
+                console.log(error.response.data);
+                alert('서버 오류가 발생했습니다.');
+            });
+    }
+
+
+    function deleteTodos() {
+        var selectedIds = document.querySelectorAll('.select-checkbox:checked');
+
+        if (selectedIds.length === 0) {
+            alert('선택된 항목이 없습니다.');
+        } else {
+            var todoIds = Array.from(selectedIds).map(function (checkbox) {
+                return checkbox.value;
+            });
+
+            axios.post('/home/deleteTodos', {todoIds: todoIds}, {headers: {'Content-Type': 'application/json'}})
+                .then(function (response) {
+                    console.log(response);
+                    location.reload();
+                })
+                .catch(function (error) {
+                    console.log(error.response.data);
+                    alert('서버 오류가 발생했습니다.');
+                });
+
+        }
+
+    }
+
     //------------------------------------------------------------------------------------------------
 
 
@@ -246,6 +293,7 @@
             groupButton.disabled = false;
         }
     }
+
     //------------------------------------------------------------------------------------------------
 
     // 루틴을 공유하는 함수
@@ -283,8 +331,9 @@
             groupTitle: groupTitle,
             groupCategory: groupCategory,
         })
-                .then(function (response) {
+            .then(function (response) {
                 console.log(response);
+                alert('그룹화 성공!');
             })
             .catch(function (error) {
                 console.log(error.response.data);

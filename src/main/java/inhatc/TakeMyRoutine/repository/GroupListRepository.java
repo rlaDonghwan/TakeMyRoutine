@@ -2,6 +2,7 @@ package inhatc.TakeMyRoutine.repository;
 
 
 import inhatc.TakeMyRoutine.domain.GroupList;
+import inhatc.TakeMyRoutine.domain.Todo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,9 +12,11 @@ import java.util.Optional;
 @Repository
 public interface GroupListRepository extends JpaRepository<GroupList, Long> {
 
-    Optional<GroupList> findByTodoId(Long todoId);
 
-    List<GroupList> findByTodoGroup_Id(Long groupId);
 
-    void deleteByIdIn(List<Long> todoIds);
+
+    void deleteByTodoIdIn(List<Long> todoIds);
+
+    List<GroupList> findByTodo(Todo todo);
+    void deleteByIdIn(List<Long> ids);
 }

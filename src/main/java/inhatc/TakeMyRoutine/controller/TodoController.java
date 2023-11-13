@@ -112,6 +112,36 @@ public class TodoController {
         }
     }
 
+
+    @PostMapping("/deleteGroup")
+    public ResponseEntity<String> deleteGroup(@RequestBody Map<String, List<Long>> requestBody) {
+        try {
+            List<Long> todoIds = requestBody.get("todoIds");
+            todoService.deleteGroup(todoIds);
+
+            return new ResponseEntity<>("Completed successfully", HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Failed to complete todos", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/checkGroupExistence")
+    public ResponseEntity<Map<String, Boolean>> checkGroupExistence(@RequestBody Map<String, List<Long>> requestBody) {
+        try {
+            List<Long> todoIds = requestBody.get("todoIds");
+            boolean exists = todoService.checkGroupExistence(todoIds);
+
+            Map<String, Boolean> response = new HashMap<>();
+            response.put("exists", exists);
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     //-------------------------------------------------------------------------------------------------
 
     private LocalDateTime getLocalDateTimeFromObject(Object value) {

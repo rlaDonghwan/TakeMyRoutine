@@ -78,7 +78,6 @@
 </div>
 <!---------------------------------------------------------------------------------------------------->
 
-
 <!-- Update 모달 -->
 <div class="modal" tabindex="-1" role="dialog" id="updateEventModal">
     <div class="modal-dialog" role="document">
@@ -125,6 +124,7 @@
     function getUserId() {
         return sessionStorage.getItem('userId');
     }
+
     //-------------------------------------------------------------------------------------------
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -138,7 +138,6 @@
                     params: {
                         start: fetchInfo.startStr,
                         end: fetchInfo.endStr
-
                     }
                 })
                     .then(function (response) {
@@ -151,6 +150,7 @@
                         console.error('Error fetching events', error);
                         failureCallback(error);
                     });
+
             },
             editable: true,
             selectable: true,
@@ -192,13 +192,15 @@
 
         // Axios를 사용하여 서버에 이벤트 추가 요청
         axios.post('/home/calendar/addEvent', {
-            params: {
-                title: title,
-                date: localDateTime,
-                time: time,
-                content: content,
-                place: place,
-                userId: getUserId()  // 함수로 userId 추가
+            title: title,
+            date: localDateTime,
+            time: time,
+            content: content,
+            place: place,
+            userId: getUserId()  // 함수로 userId 추가
+        }, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
             }
         })
             .then(function (response) {
@@ -207,8 +209,11 @@
             })
             .catch(function (error) {
                 console.error('Error adding event', error);
+                console.log('Server response:', error.response.data);
             });
+
     }
+
     //-------------------------------------------------------------------------------------------
 
     // 추가된 부분: Now 버튼 클릭 시 현재 시간 입력
@@ -256,6 +261,7 @@
                 console.error('Error updating event', error);
             });
     }
+
     //-------------------------------------------------------------------------------------------
 
     //Update 모달 Now 버튼 클릭 시 현재 시간 입력
@@ -301,6 +307,7 @@
             });
 
     }
+
     //-------------------------------------------------------------------------------------------
 
     // 추가된 부분: Update 모달 Delete 버튼 클릭 시 이벤트 삭제

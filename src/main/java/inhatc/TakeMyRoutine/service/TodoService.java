@@ -2,6 +2,7 @@ package inhatc.TakeMyRoutine.service;
 
 import inhatc.TakeMyRoutine.domain.GroupList;
 import inhatc.TakeMyRoutine.domain.Todo;
+import inhatc.TakeMyRoutine.domain.TodoGroup;
 import inhatc.TakeMyRoutine.domain.User;
 import inhatc.TakeMyRoutine.dto.TodoRequest;
 import inhatc.TakeMyRoutine.repository.GroupListRepository;
@@ -10,6 +11,7 @@ import inhatc.TakeMyRoutine.repository.TodoRepositroy;
 import inhatc.TakeMyRoutine.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@Slf4j
 @RequiredArgsConstructor
 public class TodoService {
     private final TodoRepositroy todoRepositroy;
@@ -32,7 +35,6 @@ public class TodoService {
 
     //값을 추가하는 서비스
     public Todo join(TodoRequest todoRequest) {
-        // 세션에서 userId 가져오기
         Long userId = (Long) httpSession.getAttribute("userId");
 
         // userId로 User 엔터티 조회
@@ -47,7 +49,6 @@ public class TodoService {
         todo.setMemo(todoRequest.getMemo());
         todo.setPlace(todoRequest.getPlace());
 
-        // startTime에 1시간 추가하여 endTime 설정
         todo.setEndTime(todoRequest.getStartTime().plusHours(1));
 
         // Todo 저장
@@ -57,7 +58,6 @@ public class TodoService {
     //-------------------------------------------------------------------------------------------------
     //홈 화면 리스트에 출력된 리스트를 불러오는 서비스
     public List<Todo> getTodoList(Long userId) {
-        // TodoRepository를 사용하여 해당 사용자의 Todo 리스트를 가져오는 로직 작성
         return todoRepositroy.findByUserId(userId);
     }
     //-------------------------------------------------------------------------------------------------
@@ -104,10 +104,6 @@ public class TodoService {
 
     //캘린더 이벤트 추가
     public void addEvent(Long userId, String title, LocalDateTime dateTime, String content, String place) {
-        // 여기에 데이터베이스에 이벤트를 추가하는 로직을 넣어야 해
-        // 예를 들어, Todo 엔터티를 생성하고 저장하는 식으로 구현 가능
-
-        // User 엔터티를 가져오는 코드
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
@@ -121,7 +117,10 @@ public class TodoService {
                 .build();
 
         todoRepositroy.save(todo);
+        log.info("Event added successfully. User: {}, Title: {}, Time: {}, Content: {}, Place: {}",
+                userId, title, dateTime, content, place);
     }
+
     //-------------------------------------------------------------------------------------------------
 
     //캘린더 이벤트 수정
@@ -154,4 +153,34 @@ public class TodoService {
 
 
 
+
+
+
+
+
+    public boolean checkGroupExistence(List<Long> todoIds) {
+        return todoIds.stream()
+                .map(todoRepositroy::findById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .anyMatch(todo -> !groupListRepository.findByTodo(todo).isEmpty());
+    }
+
+
+    public void deleteGroup(List<Long> todoIds) {
+        // 여기서 해당 todoIds를 참조하는 TodoGroup을 찾아서 삭제하는 로직을 추가합니다.
+        List<TodoGroup> todoGroups = todoGroupRepository.findByGroupLists_Todo_IdIn(todoIds);
+        todoGroupRepository.deleteAll(todoGroups);
+
+        // 수정: deleteByGroupIdIn -> deleteByIdIn으로 변경
+        todoGroupRepository.deleteByIdIn(todoIds);
+
+        // 나머지 삭제 로직은 유지합니다.
+        todoRepositroy.deleteByIdIn(todoIds);
+        groupListRepository.deleteByTodoIdIn(todoIds);
+    }
 }
+
+
+
+

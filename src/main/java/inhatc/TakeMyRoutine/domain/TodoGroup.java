@@ -29,5 +29,5 @@ public class TodoGroup {
 
     private String category; // 그룹의 카테고리
 
-
+    private boolean share; // 공유 여부
 }

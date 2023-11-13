@@ -9,14 +9,17 @@ import inhatc.TakeMyRoutine.repository.TodoRepositroy;
 import inhatc.TakeMyRoutine.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 @Transactional
 @RequiredArgsConstructor
 public class TodoGroupService {
@@ -69,6 +72,14 @@ public class TodoGroupService {
         return todoGroupRepository.findAll();
     }
 
+    // 해당 유저가 공유 가능한 그룹 목록을 가져오는 메서드
+    public List<TodoGroup> getShareableGroupList() {
+        // share가 true인 그룹들만 필터링
+        return todoGroupRepository.findByShareTrue();
+    }
+
+
+
     public void updateGroup(Long groupId, String updatedGroupName, String updatedGroupCategory) {
         // TodoGroup 엔터티 조회
         Optional<TodoGroup> optionalTodoGroup = todoGroupRepository.findById(groupId);
@@ -83,9 +94,19 @@ public class TodoGroupService {
         });
     }
 
-    public void completeTodos(List<Long> groupId) {
+    public void deleteGroup(List<Long> groupId) {
         todoGroupRepository.deleteByIdIn(groupId);
     }
 
+
+    public void shareGroups(List<Long> groupIds) {
+        for (Long groupId : groupIds) {
+            Optional<TodoGroup> optionalTodoGroup = todoGroupRepository.findById(groupId);
+            optionalTodoGroup.ifPresent(todoGroup -> {
+                todoGroup.setShare(true);
+                todoGroupRepository.save(todoGroup);
+            });
+        }
+    }
 
 }

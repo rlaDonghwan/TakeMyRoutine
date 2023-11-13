@@ -29,22 +29,18 @@ import java.util.stream.Collectors;
 public class CalendarController {
 
     private final TodoService todoService;
-
+    //캘린더를 띄워주는 메서드
     @GetMapping("/calendar")
     public String calendarPage(Model model, HttpSession session) {
         model.addAttribute("loginType", "home");
         model.addAttribute("pageName", "calendar");
-
+        //세션에서 userId값을 가져옴
         Long userId = (Long) session.getAttribute("userId");
 
         // 사용자 정보가 없으면 로그인 페이지로 리다이렉트
         if (userId == null) {
             return "redirect:/home/login";
         }
-
-        // 사용자 정보가 있으면 Todo 페이지로 이동
-        model.addAttribute("todoRequest", new TodoRequest(userId));
-
 
         return "calendar";
     }
@@ -90,9 +86,22 @@ public class CalendarController {
 
         LocalDateTime dateTime = LocalDateTime.parse(time, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"));
 
-        todoService.addEvent(userId, title, dateTime, content, place);
+        try {
+            todoService.addEvent(userId, title, dateTime, content, place);
 
-        return "Event added successfully!";
+            // 이벤트 추가 성공 로그
+            log.info("Event added successfully. User ID: {}, Title: {}, Time: {}, Content: {}, Place: {}",
+                    userId, title, dateTime, content, place);
+
+            return "Event added successfully!";
+        } catch (Exception e) {
+            // 에러가 발생한 경우 로그
+            log.error("Error adding event. User ID: {}, Title: {}, Time: {}, Content: {}, Place: {}",
+                    userId, title, dateTime, content, place, e);
+
+            // 클라이언트에게 에러 메시지 반환
+            return "Error adding event. Please check the logs for details.";
+        }
     }
 
     @PutMapping("/calendar/updateEvent")

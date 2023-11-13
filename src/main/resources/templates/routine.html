@@ -97,13 +97,14 @@
 
 
         <!-- 공유 루틴 목록 테이블 -->
+        <!-- Share Routine List 테이블 수정 -->
+        <!-- 공유 루틴 목록 테이블 -->
         <div class="col-md-5 ml-auto">
             <h3 class="text-center mb-4">Share Routine List</h3>
             <div class="border p-3">
                 <div class="btn-container">
                     <!-- 다운로드하기 버튼 추가 -->
                     <button class="btn btn-success" onclick="downloadRoutine()">다운로드하기</button>
-                    <button class="btn btn-info ml-2" onclick="openViewRoutineModal()">루틴 확인하기</button>
                 </div>
                 <table class="table table-striped">
                     <thead>
@@ -114,22 +115,21 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <!-- 임의의 데이터 추가 -->
-                    <tr th:each="sharedRoutine : ${sharedRoutineList}">
+                    <!-- 수정된 부분: shareGroups를 사용하여 공유 루틴 목록을 보여줌 -->
+                    <tr th:each="sharedRoutine : ${groupList}">
                         <td>
                             <input type="checkbox" class="select-checkbox" th:value="${sharedRoutine.id}"/>
                         </td>
-                        <td th:text="${sharedRoutine.user}">user123</td>
-                        <td th:text="${sharedRoutine.title}">운동 루틴</td>
+                        <td th:text="${sharedRoutine.user.nickname}">user123</td>
+                        <td th:text="${sharedRoutine.groupName}">운동 루틴</td>
                     </tr>
                     </tbody>
                 </table>
             </div>
         </div>
-    </div>
-</div>
 
-<script>
+
+        <script>
     var selectedGroupId;
     // 문서 로딩 후 실행될 코드
     $(document).ready(function () {
@@ -226,6 +226,33 @@
         }
     }
     //---------------------------------------------------------------------------------
+
+    function shareGroup() {
+        var selectedIds = document.querySelectorAll('.select-checkbox:checked');
+
+        if (selectedIds.length === 0) {
+            alert('선택된 항목이 없습니다.');
+        } else {
+            if (confirm('선택된 그룹을 공유하시겠습니까?')) {
+                var groupId = Array.from(selectedIds).map(function (checkbox) {
+                    return checkbox.value;
+                });
+
+                // Axios를 사용하여 서버에 공유 요청 보내기
+                axios.post('/home/shareGroups', {groupId: groupId}, {headers: {'Content-Type': 'application/json'}})
+                    .then(function (response) {
+                        console.log(response);
+                        location.reload();
+                        alert('그룹이 공유되었습니다.');
+                    })
+                    .catch(function (error) {
+                        console.log(error.response.data);
+                        alert('서버 오류가 발생했습니다.');
+                    });
+            }
+        }
+    }
+
 
 </script>
 

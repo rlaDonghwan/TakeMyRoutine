@@ -13,8 +13,11 @@ public interface TodoGroupRepository extends JpaRepository<TodoGroup,Long> {
 
     Optional<TodoGroup> findById(Long groupId);
 
-    TodoGroup findByGroupName(String updatedGroupName);
+
+    List<TodoGroup> findByShareTrue();
 
 
-    void deleteByIdIn(List<Long> groupId);
+    void deleteByIdIn(List<Long> groupIds);
+
+    List<TodoGroup> findByGroupLists_Todo_IdIn(List<Long> todoIds);
 }

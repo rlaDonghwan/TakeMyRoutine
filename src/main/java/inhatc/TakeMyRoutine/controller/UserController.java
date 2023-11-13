@@ -41,7 +41,6 @@ public class UserController {
 
         if (loginUser != null) {
             model.addAttribute("nickname", loginUser.getNickname());
-
             // 여기서 추가적인 디비 정보를 가져와서 모델에 추가
             // 예시: Todo 리스트를 가져온다고 가정
             List<Todo> todoList = todoService.getTodoList(userId);
