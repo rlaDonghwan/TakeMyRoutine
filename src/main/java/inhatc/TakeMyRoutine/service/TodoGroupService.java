@@ -4,6 +4,7 @@ import inhatc.TakeMyRoutine.domain.GroupList;
 import inhatc.TakeMyRoutine.domain.Todo;
 import inhatc.TakeMyRoutine.domain.TodoGroup;
 import inhatc.TakeMyRoutine.domain.User;
+import inhatc.TakeMyRoutine.repository.GroupListRepository;
 import inhatc.TakeMyRoutine.repository.TodoGroupRepository;
 import inhatc.TakeMyRoutine.repository.TodoRepositroy;
 import inhatc.TakeMyRoutine.repository.UserRepository;
@@ -26,8 +27,9 @@ public class TodoGroupService {
     private final TodoRepositroy todoRepository;
     private final TodoGroupRepository todoGroupRepository;
     private final UserRepository userRepository;
+    private final GroupListRepository groupListRepository;
 
-    // TodoGroupService에서 insertGroup 메서드 수정
+    //그룹을 추가하는 메서드
     public List<TodoGroup> insertGroup(Long userId, List<Long> todoIds, String groupTitle, String groupCategory) {
         // 새로운 그룹 생성
         TodoGroup todoGroup = new TodoGroup();
@@ -66,20 +68,22 @@ public class TodoGroupService {
         // 저장된 그룹 목록 반환
         return user.getTodoGroups();
     }
+    //-------------------------------------------------------------------------------------------------
 
-    // 데이터베이스에서 그룹 리스트를 조회하는 메서드
+    // 그룹 리스트를 가져오는 메서드
     public List<TodoGroup> getGroupList() {
         return todoGroupRepository.findAll();
     }
+    //-------------------------------------------------------------------------------------------------
 
     // 해당 유저가 공유 가능한 그룹 목록을 가져오는 메서드
     public List<TodoGroup> getShareableGroupList() {
         // share가 true인 그룹들만 필터링
         return todoGroupRepository.findByShareTrue();
     }
+    //-------------------------------------------------------------------------------------------------
 
-
-
+    //그룹 이름 카테고리를 수정하는 메서드
     public void updateGroup(Long groupId, String updatedGroupName, String updatedGroupCategory) {
         // TodoGroup 엔터티 조회
         Optional<TodoGroup> optionalTodoGroup = todoGroupRepository.findById(groupId);
@@ -93,12 +97,15 @@ public class TodoGroupService {
             todoGroupRepository.save(todoGroup);
         });
     }
+    //-------------------------------------------------------------------------------------------------
 
+    //그룹을 삭제하는 메서드
     public void deleteGroup(List<Long> groupId) {
         todoGroupRepository.deleteByIdIn(groupId);
     }
+    //-------------------------------------------------------------------------------------------------
 
-
+    //그룹을 공유하는 메서드
     public void shareGroups(List<Long> groupIds) {
         for (Long groupId : groupIds) {
             Optional<TodoGroup> optionalTodoGroup = todoGroupRepository.findById(groupId);
@@ -108,5 +115,8 @@ public class TodoGroupService {
             });
         }
     }
+    //-------------------------------------------------------------------------------------------------
+
+
 
 }

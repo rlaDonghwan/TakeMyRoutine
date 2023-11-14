@@ -1,5 +1,6 @@
 package inhatc.TakeMyRoutine.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,5 +23,7 @@ public class GroupList {
     @ManyToOne
     @JoinColumn(name = "group_id")
     private TodoGroup todoGroup;
+
+
 
 }

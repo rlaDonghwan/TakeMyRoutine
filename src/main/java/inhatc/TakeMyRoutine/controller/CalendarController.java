@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 public class CalendarController {
 
     private final TodoService todoService;
-    //캘린더를 띄워주는 메서드
+    //캘린더 화면 컨트롤러
     @GetMapping("/calendar")
     public String calendarPage(Model model, HttpSession session) {
         model.addAttribute("loginType", "home");
@@ -44,7 +44,9 @@ public class CalendarController {
 
         return "calendar";
     }
+    //-------------------------------------------------------------------------------------------------
 
+    //캘린더 이벤트 출력 컨트롤러
     @GetMapping("/calendar/events")
     @ResponseBody
     public List<Map<String, Object>> getEvents(@RequestParam String start, @RequestParam String end, HttpSession session) {
@@ -77,8 +79,9 @@ public class CalendarController {
                 })
                 .collect(Collectors.toList());
     }
+    //-------------------------------------------------------------------------------------------------
 
-
+    //캘린더 이벤트 추가
     @PostMapping("/calendar/addEvent")
     @ResponseBody
     public String addEvent(@RequestParam String title, @RequestParam String time, @RequestParam String content, @RequestParam String place, HttpSession session) {
@@ -103,7 +106,9 @@ public class CalendarController {
             return "Error adding event. Please check the logs for details.";
         }
     }
+    //-------------------------------------------------------------------------------------------------
 
+    //캘린더 이벤트 수정
     @PutMapping("/calendar/updateEvent")
     public ResponseEntity<String> updateEvent(@RequestBody Map<String, Object> requestBody, HttpSession session) {
         try {
@@ -127,7 +132,9 @@ public class CalendarController {
             return new ResponseEntity<>("Failed to update event", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    //-------------------------------------------------------------------------------------------------
 
+    //이벤트 삭제 수정 필요
     @DeleteMapping("/calendar/deleteEvent")
     public ResponseEntity<String> deleteEvent(@RequestParam Long todoId, HttpSession session) {
         Long userId = (Long) session.getAttribute("userId");
@@ -138,6 +145,8 @@ public class CalendarController {
             return new ResponseEntity<>("Error deleting event: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    //-------------------------------------------------------------------------------------------------
+
 
 }
 

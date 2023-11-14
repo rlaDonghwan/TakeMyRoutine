@@ -1,12 +1,10 @@
 package inhatc.TakeMyRoutine.controller;
 
-import inhatc.TakeMyRoutine.domain.Todo;
 import inhatc.TakeMyRoutine.domain.TodoGroup;
 import inhatc.TakeMyRoutine.domain.User;
-import inhatc.TakeMyRoutine.dto.TodoRequest;
 import inhatc.TakeMyRoutine.service.TodoGroupService;
+import inhatc.TakeMyRoutine.service.TodoService;
 import inhatc.TakeMyRoutine.service.UserService;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -17,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -27,6 +24,9 @@ import java.util.stream.Collectors;
 public class RoutineController {
     private final TodoGroupService todoGroupService;
     private final UserService userService;
+    private final TodoService todoService;
+
+    //루틴 화면 컨트롤러
     @GetMapping("/routine")
     public String routinePage(Model model, @SessionAttribute(name = "userId", required = false) Long userId) {
         model.addAttribute("loginType", "home");
@@ -59,7 +59,9 @@ public class RoutineController {
         return "routine";
 
     }
+    //-------------------------------------------------------------------------------------------------
 
+    //그룹 수정 컨트롤러
     @PutMapping("/updateGroup")
     @ResponseBody
     public ResponseEntity<String> updateGroup(@RequestBody Map<String, String> updateGroupData) {
@@ -75,7 +77,9 @@ public class RoutineController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
         }
     }
+    //-------------------------------------------------------------------------------------------------
 
+    //그룹 삭제
     @PostMapping("/deleteGroups")
     public ResponseEntity<String> deleteGroups(@RequestBody Map<String, List<Long>> requestBody) {
         try {
@@ -105,10 +109,7 @@ public class RoutineController {
             return new ResponseEntity<>("그룹 ID가 유효하지 않습니다.", HttpStatus.BAD_REQUEST);
         }
     }
-
-
-
-
+    //---------------------------------------------------------------------------------------------------------------
 
 
 

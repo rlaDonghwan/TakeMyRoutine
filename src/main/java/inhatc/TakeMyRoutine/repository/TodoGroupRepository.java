@@ -1,5 +1,6 @@
 package inhatc.TakeMyRoutine.repository;
 
+import inhatc.TakeMyRoutine.domain.GroupList;
 import inhatc.TakeMyRoutine.domain.Todo;
 import inhatc.TakeMyRoutine.domain.TodoGroup;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,12 +13,10 @@ import java.util.Optional;
 public interface TodoGroupRepository extends JpaRepository<TodoGroup,Long> {
 
     Optional<TodoGroup> findById(Long groupId);
-
-
     List<TodoGroup> findByShareTrue();
-
 
     void deleteByIdIn(List<Long> groupIds);
 
     List<TodoGroup> findByGroupLists_Todo_IdIn(List<Long> todoIds);
+
 }

@@ -31,6 +31,7 @@ public class UserController {
     private final UserService userService;
     private final TodoService todoService;
 
+    //메인화면 컨트롤러
     @GetMapping(value = {"", "/"})
     public String home(Model model, @SessionAttribute(name = "userId", required = false) Long userId) {
         model.addAttribute("loginType", "home");
@@ -50,7 +51,9 @@ public class UserController {
         log.info("UseController");
         return "home";
     }
+    //-------------------------------------------------------------------------------------------------
 
+    //회원가입 화면 컨트롤러
     @GetMapping("/join")
     public String joinPage(Model model) {
         model.addAttribute("loginType", "home");
@@ -59,7 +62,9 @@ public class UserController {
         model.addAttribute("joinRequest", new JoinRequest());
         return "join";
     }
+    //-------------------------------------------------------------------------------------------------
 
+    //회원가입 처리 컨트롤러
     @PostMapping("/join")
     public String join(@Valid @ModelAttribute JoinRequest joinRequest, BindingResult bindingResult, Model model) {
         model.addAttribute("loginType", "home");
@@ -85,7 +90,9 @@ public class UserController {
         userService.join(joinRequest);
         return "redirect:/home";
     }
+    //-------------------------------------------------------------------------------------------------
 
+    //로그인 화면 컨트롤러
     @GetMapping("/login")
     public String loginPage(Model model) {
         model.addAttribute("loginType", "home");
@@ -94,7 +101,9 @@ public class UserController {
         model.addAttribute("loginRequest", new LoginRequest());
         return "login";
     }
+    //-------------------------------------------------------------------------------------------------
 
+    //로그인 처리 컨트롤러
     @PostMapping("/login")
     public String login(@ModelAttribute LoginRequest loginRequest, BindingResult bindingResult,
                         HttpServletRequest httpServletRequest, Model model) {
@@ -120,7 +129,9 @@ public class UserController {
         session.setMaxInactiveInterval(1800); // Session이 30분동안 유지
         return "redirect:/home";
     }
+    //-------------------------------------------------------------------------------------------------
 
+    //로그아웃 처리 컨트롤러
     @GetMapping("/logout")
     public String logout(HttpServletRequest request, Model model) {
         model.addAttribute("loginType", "home");
@@ -132,6 +143,8 @@ public class UserController {
         }
         return "redirect:/home";
     }
+    //-------------------------------------------------------------------------------------------------
+
 
 }
 

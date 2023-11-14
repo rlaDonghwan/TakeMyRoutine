@@ -14,7 +14,6 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 
-
     <style>
         body {
             background-color: #f8f9fa;
@@ -56,7 +55,7 @@
                             <input type="checkbox" class="select-checkbox" th:value="${todoGroup.id}"/>
                         </td>
                         <td th:text="${todoGroup.groupName}"></td>
-                        <td th:text="${todoGroup.category}"></td>
+                        <td th:text="${todoGroup.category} "></td>
                     </tr>
                     </tbody>
                 </table>
@@ -96,7 +95,6 @@
         </div>
 
 
-        <!-- 공유 루틴 목록 테이블 -->
         <!-- Share Routine List 테이블 수정 -->
         <!-- 공유 루틴 목록 테이블 -->
         <div class="col-md-5 ml-auto">
@@ -104,7 +102,9 @@
             <div class="border p-3">
                 <div class="btn-container">
                     <!-- 다운로드하기 버튼 추가 -->
-                    <button class="btn btn-success" onclick="downloadRoutine()">다운로드하기</button>
+                    <button class="btn btn-success" onclick="downloadedTodoListModal()" id="downloadButton" disabled>
+                        다운로드하기
+                    </button>
                 </div>
                 <table class="table table-striped">
                     <thead>
@@ -112,30 +112,96 @@
                         <th>Select</th>
                         <th>User</th>
                         <th>Title</th>
+                        <th>Category</th>
                     </tr>
                     </thead>
                     <tbody>
                     <!-- 수정된 부분: shareGroups를 사용하여 공유 루틴 목록을 보여줌 -->
                     <tr th:each="sharedRoutine : ${groupList}">
                         <td>
-                            <input type="checkbox" class="select-checkbox" th:value="${sharedRoutine.id}"/>
+                            <input type="checkbox" class="select-checkbox" th:value="${sharedRoutine.id}"
+                                   th:data-name="${sharedRoutine.groupName}"/>
                         </td>
-                        <td th:text="${sharedRoutine.user.nickname}">user123</td>
-                        <td th:text="${sharedRoutine.groupName}">운동 루틴</td>
+                        <td th:text="${sharedRoutine.user.nickname}"></td>
+                        <td th:text="${sharedRoutine.groupName}"></td>
+                        <td th:text="${sharedRoutine.category}"></td>
                     </tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
+        <!-- 다운로드된 투두 리스트 모달 창 -->
+        <div class="modal fade" id="downloadedTodoListModal" tabindex="-1" role="dialog"
+             aria-labelledby="downloadedTodoListModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="downloadedTodoListModalLabel" th:text="${selectedGroupName}"></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="row mb-4">
+                                <div class="col-md-12 text-center">
+                                    <h4 class="mb-3">Group Information</h4>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="border p-3">
+                                        <table class="table table-striped">
+                                            <thead>
+                                            <tr>
+                                                <th>Select</th>
+                                                <th>Title</th>
+                                                <th>Memo</th>
+                                                <th>Place</th>
+                                                <th>Date and Time</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr th:each="todo : ${todoList}">
+                                                <td>
+                                                    <input type="checkbox" class="select-checkbox"
+                                                           th:value="${todo.id}"/>
+                                                </td>
+                                                <td th:text="${todo.title}"></td>
+                                                <td th:text="${todo.memo}"></td>
+                                                <td th:text="${todo.place}"></td>
+                                                <td th:text="${todo.startTime}"></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary mr-2 mb-2" onclick="openUpdateModal()">수정</button>
+                        <button class="btn btn-success mr-2 mb-2" onclick="downloadTodoList()">다운로드</button>
+                        <button class="btn btn-secondary mb-2" data-dismiss="modal">닫기</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <script>
+
+    </div>
+</div>
+</body>
+
+<script>
     var selectedGroupId;
     // 문서 로딩 후 실행될 코드
     $(document).ready(function () {
         // 체크박스 변경 시 이벤트 리스너 추가
         $('.select-checkbox').on('change', function () {
             updateButtonState();
+            downloadedButtonState();
         });
     });
     //---------------------------------------------------------------------------------
@@ -153,6 +219,7 @@
             selectedGroupId = selectedIds.length === 1 ? selectedIds[0].value : null;
         }
     }
+
     //---------------------------------------------------------------------------------
 
     //수정 모달을 띄워주는 함수
@@ -162,10 +229,11 @@
         if (selectedGroupId) {
             // 모달 열기
             $('#updateGroupModal').modal('show');
-        }else {
+        } else {
             alert('수정할 항목을 선택해주세요.');
         }
     }
+
     //---------------------------------------------------------------------------------
 
     // 그룹을 수정하는 함수
@@ -198,10 +266,11 @@
         // 모달 닫기
         $('#updateGroupModal').modal('hide');
     }
+
     //---------------------------------------------------------------------------------
 
     //그룹을 삭제하는 함수
-    function deleteGroup(){
+    function deleteGroup() {
         var selectedIds = document.querySelectorAll('.select-checkbox:checked');
 
         if (selectedIds.length === 0) {
@@ -225,6 +294,7 @@
             }
         }
     }
+
     //---------------------------------------------------------------------------------
 
     function shareGroup() {
@@ -253,9 +323,71 @@
         }
     }
 
+    //---------------------------------------------------------------------------------
+
+    // 다운로드 모달 창 열기
+
+    var selectedDownloadId
+
+    function downloadedButtonState() {
+        var selectedIds = document.querySelectorAll('.select-checkbox:checked');
+        var downloadButton = document.getElementById('downloadButton');
+
+        if (selectedIds.length >= 2) {
+            downloadButton.disabled = true;
+            selectedDownloadId = null; // 선택된 Todo가 없을 경우 selectedTodoId 초기화
+        } else {
+            downloadButton.disabled = false;
+            selectedDownloadId = selectedIds.length === 1 ? selectedIds[0].value : null;
+        }
+    }
+
+    async function downloadedTodoListModal() {
+        downloadedButtonState();  // 모달 열기 전에 상태 업데이트
+
+        try {
+            if (selectedDownloadId) {
+                var groupId = selectedDownloadId;
+                const response = await axios.get('/home/getTodoListByGroupId/' + groupId);
+
+                console.log('Response from server:', response);
+
+                if (response.data) {
+                    console.log('Received data:', response.data);
+                    displayTodoListInModal(response.data);
+                    $('#downloadedTodoListModal').modal('show');
+                } else {
+                    console.error('No data received');
+                }
+            } else {
+                alert('다운로드할 항목을 선택해주세요.');
+            }
+        } catch (error) {
+            console.error('Error from server:', error.response?.data);
+            alert('서버 오류가 발생했습니다.');
+        }
+    }
+
+    function displayTodoListInModal(todoList) {
+        var modalTableBody = document.querySelector('#downloadedTodoListModal tbody');
+        modalTableBody.innerHTML = '';
+
+        todoList.forEach(function (todo) {
+            var newRow = modalTableBody.insertRow();
+            newRow.innerHTML = `
+        <td>
+            <input type="checkbox" class="select-checkbox" value="${todo.id}" />
+        </td>
+        <td>${todo.title}</td>
+        <td>${todo.memo}</td>
+        <td>${todo.place}</td>
+        <td>${todo.startTime}</td>
+    `;
+        });
+    }
+
+
 
 </script>
-
-
 </body>
 </html>

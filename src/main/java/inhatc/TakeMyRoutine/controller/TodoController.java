@@ -40,7 +40,7 @@ public class TodoController {
     private final TodoGroupRepository todoGroupRepository;
     private final GroupListRepository groupListRepository;
 
-    //투두리스트 입력창 들어가는 컨트롤러
+    //투두리스트 화면 컨트롤러
     @GetMapping("/todoInsert")
     public String todoPage(Model model, HttpSession session) {
         model.addAttribute("loginType", "home");
@@ -60,7 +60,7 @@ public class TodoController {
     }
     //-------------------------------------------------------------------------------------------------
 
-    //투두리스트 추가 버튼을 누르면 실행되는 컨트롤러
+    //투두리스트 추가 컨트롤러
     @PostMapping("/todoInsert")
     public String todoInsert(@Valid @ModelAttribute TodoRequest todoRequest, Model model) {
         model.addAttribute("loginType", "home");
@@ -111,8 +111,9 @@ public class TodoController {
             return new ResponseEntity<>("Failed to complete todos", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    //-------------------------------------------------------------------------------------------------
 
-
+    //그룹 삭제하는 컨트롤러
     @PostMapping("/deleteGroup")
     public ResponseEntity<String> deleteGroup(@RequestBody Map<String, List<Long>> requestBody) {
         try {
@@ -125,7 +126,9 @@ public class TodoController {
             return new ResponseEntity<>("Failed to complete todos", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    //-------------------------------------------------------------------------------------------------
 
+    //그룹에 존재 여부를 확인하는 컨트롤러
     @PostMapping("/checkGroupExistence")
     public ResponseEntity<Map<String, Boolean>> checkGroupExistence(@RequestBody Map<String, List<Long>> requestBody) {
         try {
@@ -141,9 +144,9 @@ public class TodoController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
     //-------------------------------------------------------------------------------------------------
 
+    //시간 포멧 메서드
     private LocalDateTime getLocalDateTimeFromObject(Object value) {
         if (value instanceof String) {
             return LocalDateTime.parse((String) value);
@@ -151,7 +154,9 @@ public class TodoController {
             throw new IllegalArgumentException("Invalid type for updatedDateTime");
         }
     }
+    //-------------------------------------------------------------------------------------------------
 
+    //롱 포멧 함수
     private Long getLongFromObject(Object value) {
         if (value instanceof Number) {
             return ((Number) value).longValue();
@@ -161,6 +166,7 @@ public class TodoController {
             throw new IllegalArgumentException("Invalid type for todoId");
         }
     }
+    //-------------------------------------------------------------------------------------------------
 
     //투두 리스트를 그룹화 하는 컨트롤러
     @PostMapping("/insertGroup")
@@ -192,5 +198,6 @@ public class TodoController {
                 .collect(Collectors.toList());
     }
     //-------------------------------------------------------------------------------------------------
+
 
 }

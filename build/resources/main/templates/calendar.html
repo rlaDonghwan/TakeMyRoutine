@@ -124,6 +124,7 @@
     function getUserId() {
         return sessionStorage.getItem('userId');
     }
+
     //-------------------------------------------------------------------------------------------
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -202,9 +203,7 @@
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
         })
-
-
-                .then(function (response) {
+            .then(function (response) {
                 location.reload(); //성공하면 화면 새로 고침
                 console.log('Event added successfully', response);
             })
@@ -214,6 +213,7 @@
             });
 
     }
+
     //-------------------------------------------------------------------------------------------
 
     // 추가된 부분: Now 버튼 클릭 시 현재 시간 입력
@@ -261,6 +261,7 @@
                 console.error('Error updating event', error);
             });
     }
+
     //-------------------------------------------------------------------------------------------
 
     //Update 모달 Now 버튼 클릭 시 현재 시간 입력
@@ -306,6 +307,7 @@
             });
 
     }
+
     //-------------------------------------------------------------------------------------------
 
     // 추가된 부분: Update 모달 Delete 버튼 클릭 시 이벤트 삭제

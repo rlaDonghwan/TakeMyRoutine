@@ -12,11 +12,8 @@ import java.util.Optional;
 @Repository
 public interface GroupListRepository extends JpaRepository<GroupList, Long> {
 
-
-
-
     void deleteByTodoIdIn(List<Long> todoIds);
 
     List<GroupList> findByTodo(Todo todo);
-    void deleteByIdIn(List<Long> ids);
+
 }

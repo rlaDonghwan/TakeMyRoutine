@@ -1,10 +1,14 @@
 package inhatc.TakeMyRoutine.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Entity
@@ -24,6 +28,9 @@ public class Todo {
     @JoinColumn(name = "user_id") // User와 연결되는 외래키
     private User user;  // User 엔터티와 연관
 
+    @OneToMany(mappedBy = "todo", cascade = CascadeType.ALL)
+    private List<GroupList> groupLists;
+
 
     private String title; // 제목
 
@@ -36,6 +43,7 @@ public class Todo {
     private String memo; // 내용
 
     private String place; // 약속 장소
+
 
 }
 

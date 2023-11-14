@@ -20,15 +20,21 @@ public class UserService {
     public boolean idDuplicate(String loginId){
         return userRepository.existsByLoginId(loginId);
     }
+    //-------------------------------------------------------------------------------------------------
 
+    //닉네임 중복처리
     public boolean nickNameDuplicate(String nickname){
         return userRepository.existsByNickname(nickname);
     }
+    //-------------------------------------------------------------------------------------------------
 
+    //회원가입
     public void join(JoinRequest join) {
         userRepository.save(join.toEntity());
     }
+    //-------------------------------------------------------------------------------------------------
 
+    //로그인 처리
     public User login(LoginRequest req) {
         Optional<User> optionalUser = userRepository.findByLoginId(req.getLoginId());
         // loginId와 일치하는 User가 없으면 null return
@@ -43,12 +49,9 @@ public class UserService {
         return user;
 
     }
-    /**
-     * userId(Long)를 입력받아 User을 return 해주는 기능
-     * 인증, 인가 시 사용
-     * userId가 null이거나(로그인 X) userId로 찾아온 User가 없으면 null return
-     * userId로 찾아온 User가 존재하면 User return
-     */
+    //-------------------------------------------------------------------------------------------------
+
+    //유저아이디를 가져옴
     public User getLoginUserById(Long userId) {
         if(userId == null) return null;
 
@@ -57,6 +60,7 @@ public class UserService {
 
         return optionalUser.get();
     }
+    //-------------------------------------------------------------------------------------------------
 
 
 

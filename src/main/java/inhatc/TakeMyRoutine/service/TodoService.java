@@ -9,11 +9,10 @@ import inhatc.TakeMyRoutine.repository.GroupListRepository;
 import inhatc.TakeMyRoutine.repository.TodoGroupRepository;
 import inhatc.TakeMyRoutine.repository.TodoRepositroy;
 import inhatc.TakeMyRoutine.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,6 +55,7 @@ public class TodoService {
         return todo;
     }
     //-------------------------------------------------------------------------------------------------
+
     //홈 화면 리스트에 출력된 리스트를 불러오는 서비스
     public List<Todo> getTodoList(Long userId) {
         return todoRepositroy.findByUserId(userId);
@@ -101,7 +101,6 @@ public class TodoService {
     }
     //-------------------------------------------------------------------------------------------------
 
-
     //캘린더 이벤트 추가
     public void addEvent(Long userId, String title, LocalDateTime dateTime, String content, String place) {
         User user = userRepository.findById(userId)
@@ -120,7 +119,6 @@ public class TodoService {
         log.info("Event added successfully. User: {}, Title: {}, Time: {}, Content: {}, Place: {}",
                 userId, title, dateTime, content, place);
     }
-
     //-------------------------------------------------------------------------------------------------
 
     //캘린더 이벤트 수정
@@ -148,16 +146,9 @@ public class TodoService {
     public void deleteEvent(Long todoId, Long userId) {
         todoRepositroy.deleteByIdAndUserId(todoId, userId);
     }
-    //-------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------
 
-
-
-
-
-
-
-
-
+    //그룹이 존재하는지 확인하는 메서드
     public boolean checkGroupExistence(List<Long> todoIds) {
         return todoIds.stream()
                 .map(todoRepositroy::findById)
@@ -165,8 +156,9 @@ public class TodoService {
                 .map(Optional::get)
                 .anyMatch(todo -> !groupListRepository.findByTodo(todo).isEmpty());
     }
+    //------------------------------------------------------------------------------------------------
 
-
+    //그룹을 삭제하는 메서드
     public void deleteGroup(List<Long> todoIds) {
         // 여기서 해당 todoIds를 참조하는 TodoGroup을 찾아서 삭제하는 로직을 추가합니다.
         List<TodoGroup> todoGroups = todoGroupRepository.findByGroupLists_Todo_IdIn(todoIds);
@@ -179,6 +171,8 @@ public class TodoService {
         todoRepositroy.deleteByIdIn(todoIds);
         groupListRepository.deleteByTodoIdIn(todoIds);
     }
+    //------------------------------------------------------------------------------------------------
+
 }
 
 

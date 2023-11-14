@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface TodoRepositroy extends JpaRepository<Todo, Long> {
@@ -18,7 +19,6 @@ public interface TodoRepositroy extends JpaRepository<Todo, Long> {
     void deleteByIdIn(List<Long> ids);
 
     Optional<Todo> findByIdAndUserId(Long id, Long userId);
-
 
     void deleteByIdAndUserId(Long id, Long userId);
 
