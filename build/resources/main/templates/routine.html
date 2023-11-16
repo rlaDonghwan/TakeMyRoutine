@@ -131,9 +131,10 @@
             </div>
         </div>
 
-        <!-- 다운로드된 투두 리스트 모달 창 -->
+        <!-- 다운로드 투두 리스트 모달 창 -->
         <div class="modal fade" id="downloadedTodoListModal" tabindex="-1" role="dialog"
-             aria-labelledby="downloadedTodoListModalLabel" aria-hidden="true">
+             aria-labelledby="downloadedTodoListModalLabel" aria-hidden="true"
+             th:attr="data-groupId=${selectedDownloadId}">
             <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -148,11 +149,12 @@
                                 <div class="col-md-12 text-center">
                                     <h4 class="mb-3">Group Information</h4>
                                 </div>
+
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="border p-3">
-                                        <table class="table table-striped">
+                                        <table id="todoListTable" class="table table-striped">
                                             <thead>
                                             <tr>
                                                 <th>Select</th>
@@ -163,6 +165,7 @@
                                             </tr>
                                             </thead>
                                             <tbody>
+                                            <!-- todoList를 동적으로 생성 -->
                                             <tr th:each="todo : ${todoList}">
                                                 <td>
                                                     <input type="checkbox" class="select-checkbox"
@@ -181,7 +184,6 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-primary mr-2 mb-2" onclick="openUpdateModal()">수정</button>
                         <button class="btn btn-success mr-2 mb-2" onclick="downloadTodoList()">다운로드</button>
                         <button class="btn btn-secondary mb-2" data-dismiss="modal">닫기</button>
                     </div>
@@ -342,52 +344,55 @@
         }
     }
 
-    async function downloadedTodoListModal() {
+    function downloadedTodoListModal() {
         downloadedButtonState();  // 모달 열기 전에 상태 업데이트
 
-        try {
-            if (selectedDownloadId) {
-                var groupId = selectedDownloadId;
-                const response = await axios.get('/home/getTodoListByGroupId/' + groupId);
-
-                console.log('Response from server:', response);
-
-                if (response.data) {
-                    console.log('Received data:', response.data);
-                    displayTodoListInModal(response.data);
+        // 선택된 groupId를 서버에 전달
+        if (selectedDownloadId) {
+            axios.get('/home/getTodoListByGroupId', {
+                params: {groupId: selectedDownloadId}
+            })
+                .then(function (response) {
+                    // 성공적으로 데이터를 받아왔을 때의 처리
+                    updateDownloadedModalContent(response.data);  // 새로운 함수 호출
                     $('#downloadedTodoListModal').modal('show');
-                } else {
-                    console.error('No data received');
-                }
-            } else {
-                alert('다운로드할 항목을 선택해주세요.');
-            }
-        } catch (error) {
-            console.error('Error from server:', error.response?.data);
-            alert('서버 오류가 발생했습니다.');
+                })
+                .catch(function (error) {
+                    // 오류 발생 시의 처리
+                    console.error('Failed to retrieve todo list.', error);
+                });
         }
     }
 
-    function displayTodoListInModal(todoList) {
-        var modalTableBody = document.querySelector('#downloadedTodoListModal tbody');
-        modalTableBody.innerHTML = '';
 
-        todoList.forEach(function (todo) {
-            var newRow = modalTableBody.insertRow();
-            newRow.innerHTML = `
-        <td>
-            <input type="checkbox" class="select-checkbox" value="${todo.id}" />
-        </td>
-        <td>${todo.title}</td>
-        <td>${todo.memo}</td>
-        <td>${todo.place}</td>
-        <td>${todo.startTime}</td>
-    `;
+    function updateDownloadedModalContent(data) {
+        console.log(data); // 받아온 데이터 로그 확인
+
+        // 받아온 데이터를 사용하여 모달 내용 업데이트
+        // data 변수에는 받아온 데이터가 들어있을 것이라 가정하고 필요에 따라 수정
+        $('#downloadedTodoListModalLabel').text(data.groupName);
+
+        // 나머지 내용 업데이트
+        var modalBody = $('#downloadedTodoListModal .modal-body');
+        var tableBody = modalBody.find('.table tbody');
+
+        // 기존 행 삭제
+        tableBody.empty();
+
+        // 데이터에서 각 todo 추출 및 행 추가
+        data.forEach(function (todo) {
+            var newRow = '<tr>' +
+                '<td><input type="checkbox" class="select-checkbox" value="' + todo.todoId + '"/></td>' +
+                '<td>' + todo.title + '</td>' +
+                '<td>' + todo.memo + '</td>' +
+                '<td>' + todo.place + '</td>' +
+                '<td>' + todo.startTime + '</td>' +
+                '</tr>';
+
+            tableBody.append(newRow);
         });
     }
 
 
-
 </script>
-</body>
 </html>

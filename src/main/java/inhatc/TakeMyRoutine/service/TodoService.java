@@ -9,7 +9,6 @@ import inhatc.TakeMyRoutine.repository.GroupListRepository;
 import inhatc.TakeMyRoutine.repository.TodoGroupRepository;
 import inhatc.TakeMyRoutine.repository.TodoRepositroy;
 import inhatc.TakeMyRoutine.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +30,8 @@ public class TodoService {
     private final TodoGroupRepository todoGroupRepository;
     private final GroupListRepository groupListRepository;
     private final HttpSession httpSession;  // HttpSession 주입
+
+
 
     //값을 추가하는 서비스
     public Todo join(TodoRequest todoRequest) {
@@ -172,6 +173,32 @@ public class TodoService {
         groupListRepository.deleteByTodoIdIn(todoIds);
     }
     //------------------------------------------------------------------------------------------------
+
+
+    public List<TodoRequest> getTodoListByGroupId(Long groupId) {
+        List<GroupList> groupLists = groupListRepository.findByTodoGroup_Id(groupId);
+
+        List<Long> todoIds = groupLists.stream()
+                .map(GroupList::getTodo)
+                .map(Todo::getId)
+                .collect(Collectors.toList());
+
+        if (!todoIds.isEmpty()) {
+            List<Todo> todos = todoRepositroy.findAllById(todoIds);
+            return todos.stream()
+                    .map(TodoRequest::new)
+                    .collect(Collectors.toList());
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+
+
+
+
+
+
 
 }
 

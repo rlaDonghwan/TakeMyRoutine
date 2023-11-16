@@ -11,13 +11,13 @@ import inhatc.TakeMyRoutine.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -70,12 +70,6 @@ public class TodoGroupService {
     }
     //-------------------------------------------------------------------------------------------------
 
-    // 그룹 리스트를 가져오는 메서드
-    public List<TodoGroup> getGroupList() {
-        return todoGroupRepository.findAll();
-    }
-    //-------------------------------------------------------------------------------------------------
-
     // 해당 유저가 공유 가능한 그룹 목록을 가져오는 메서드
     public List<TodoGroup> getShareableGroupList() {
         // share가 true인 그룹들만 필터링
@@ -116,6 +110,13 @@ public class TodoGroupService {
         }
     }
     //-------------------------------------------------------------------------------------------------
+
+    // 그룹 리스트를 가져오는 메서드
+    public List<TodoGroup> getGroupList() {
+        return todoGroupRepository.findAll();
+    }
+    //-------------------------------------------------------------------------------------------------
+
 
 
 

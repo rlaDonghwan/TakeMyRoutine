@@ -1,7 +1,10 @@
 package inhatc.TakeMyRoutine.controller;
 
+import inhatc.TakeMyRoutine.domain.GroupList;
+import inhatc.TakeMyRoutine.domain.Todo;
 import inhatc.TakeMyRoutine.domain.TodoGroup;
 import inhatc.TakeMyRoutine.domain.User;
+import inhatc.TakeMyRoutine.dto.TodoRequest;
 import inhatc.TakeMyRoutine.service.TodoGroupService;
 import inhatc.TakeMyRoutine.service.TodoService;
 import inhatc.TakeMyRoutine.service.UserService;
@@ -110,6 +113,20 @@ public class RoutineController {
         }
     }
     //---------------------------------------------------------------------------------------------------------------
+
+    @GetMapping("/getTodoListByGroupId")
+    public ResponseEntity<List<TodoRequest>> getTodoListByGroupId(@RequestParam Long groupId) {
+        List<TodoRequest> todoList = todoService.getTodoListByGroupId(groupId);
+        if (todoList != null && !todoList.isEmpty()) {
+            List<TodoRequest> todoRequestList = todoList.stream()
+                    .map(todo -> new TodoRequest(todo.getTodoId(), todo.getTodoNickName(), todo.getTitle(), todo.getStartTime(), todo.getEndTime(), todo.getMemo(), todo.getPlace()))
+                    .collect(Collectors.toList());
+
+            return new ResponseEntity<>(todoRequestList, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 
 
 

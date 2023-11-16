@@ -1,15 +1,11 @@
 package inhatc.TakeMyRoutine.controller;
 
-import inhatc.TakeMyRoutine.domain.GroupList;
-import inhatc.TakeMyRoutine.domain.Todo;
 import inhatc.TakeMyRoutine.domain.TodoGroup;
-import inhatc.TakeMyRoutine.domain.User;
 import inhatc.TakeMyRoutine.dto.TodoRequest;
 import inhatc.TakeMyRoutine.repository.GroupListRepository;
 import inhatc.TakeMyRoutine.repository.TodoGroupRepository;
 import inhatc.TakeMyRoutine.service.TodoGroupService;
 import inhatc.TakeMyRoutine.service.TodoService;
-import inhatc.TakeMyRoutine.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,13 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpSession;
-
-import java.sql.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -37,8 +28,6 @@ public class TodoController {
     private final TodoService todoService;
     private final TodoGroupService todoGroupService;
     private final HttpSession httpSession;
-    private final TodoGroupRepository todoGroupRepository;
-    private final GroupListRepository groupListRepository;
 
     //투두리스트 화면 컨트롤러
     @GetMapping("/todoInsert")

@@ -16,13 +16,14 @@ public class GroupList {
     @Column(name = "groupList_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "todo_id")
     private Todo todo;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id")
     private TodoGroup todoGroup;
+
 
 
 

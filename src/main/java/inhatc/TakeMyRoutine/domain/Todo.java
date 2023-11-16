@@ -24,12 +24,14 @@ public class Todo {
     @Column(name = "todo_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id") // User와 연결되는 외래키
     private User user;  // User 엔터티와 연관
 
-    @OneToMany(mappedBy = "todo", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "todo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<GroupList> groupLists;
+
 
 
     private String title; // 제목
