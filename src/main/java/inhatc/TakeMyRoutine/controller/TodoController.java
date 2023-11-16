@@ -2,8 +2,6 @@ package inhatc.TakeMyRoutine.controller;
 
 import inhatc.TakeMyRoutine.domain.TodoGroup;
 import inhatc.TakeMyRoutine.dto.TodoRequest;
-import inhatc.TakeMyRoutine.repository.GroupListRepository;
-import inhatc.TakeMyRoutine.repository.TodoGroupRepository;
 import inhatc.TakeMyRoutine.service.TodoGroupService;
 import inhatc.TakeMyRoutine.service.TodoService;
 import jakarta.validation.Valid;

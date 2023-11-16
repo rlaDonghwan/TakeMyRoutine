@@ -29,10 +29,12 @@
     </style>
 </head>
 <body>
-<div th:include="navigation.html"></div>
+<div th:insert="~{navigation.html}"></div>
+
 
 <div class="container todo-container">
     <div class="row">
+        <!--    그룹화된 루틴 리스트 출력창-->
         <div class="col-md-5">
             <h3 class="text-center mb-4">Routine List</h3>
             <div class="border p-3">
@@ -61,7 +63,7 @@
                 </table>
             </div>
         </div>
-
+        <!------------------------------------------------------------------------------------------------->
 
         <!-- 그룹 수정 모달 창 -->
         <div class="modal fade" id="updateGroupModal" tabindex="-1" role="dialog"
@@ -93,9 +95,8 @@
                 </div>
             </div>
         </div>
+        <!------------------------------------------------------------------------------------------------->
 
-
-        <!-- Share Routine List 테이블 수정 -->
         <!-- 공유 루틴 목록 테이블 -->
         <div class="col-md-5 ml-auto">
             <h3 class="text-center mb-4">Share Routine List</h3>
@@ -130,6 +131,7 @@
                 </table>
             </div>
         </div>
+        <!------------------------------------------------------------------------------------------------->
 
         <!-- 다운로드 투두 리스트 모달 창 -->
         <div class="modal fade" id="downloadedTodoListModal" tabindex="-1" role="dialog"
@@ -165,11 +167,9 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <!-- todoList를 동적으로 생성 -->
                                             <tr th:each="todo : ${todoList}">
                                                 <td>
-                                                    <input type="checkbox" class="select-checkbox"
-                                                           th:value="${todo.id}"/>
+                                                    <input type="checkbox" class="select-checkbox" th:value="${todo.id}"/>
                                                 </td>
                                                 <td th:text="${todo.title}"></td>
                                                 <td th:text="${todo.memo}"></td>
@@ -324,13 +324,10 @@
             }
         }
     }
-
     //---------------------------------------------------------------------------------
 
-    // 다운로드 모달 창 열기
-
     var selectedDownloadId
-
+    //다운로드 버튼상태 확인 함수
     function downloadedButtonState() {
         var selectedIds = document.querySelectorAll('.select-checkbox:checked');
         var downloadButton = document.getElementById('downloadButton');
@@ -343,7 +340,9 @@
             selectedDownloadId = selectedIds.length === 1 ? selectedIds[0].value : null;
         }
     }
+    //---------------------------------------------------------------------------------
 
+    //groupId로 그룹화된 Todo리스트 값을 요청하는 함수
     function downloadedTodoListModal() {
         downloadedButtonState();  // 모달 열기 전에 상태 업데이트
 
@@ -363,8 +362,9 @@
                 });
         }
     }
+    //---------------------------------------------------------------------------------
 
-
+    //groupId로 그룹화된 Todo리스트를 출력하는 함수
     function updateDownloadedModalContent(data) {
         console.log(data); // 받아온 데이터 로그 확인
 
@@ -392,6 +392,34 @@
             tableBody.append(newRow);
         });
     }
+    //---------------------------------------------------------------------------------
+    function downloadTodoList() {
+        var selectedIds = document.querySelectorAll('.select-checkbox:checked');
+
+        if (selectedIds.length === 0) {
+            alert('선택된 항목이 없습니다.');
+        } else {
+            // 선택된 Todo들의 ID를 추출하여 배열로 만듦
+            var todoIds = Array.from(selectedIds).map(function (checkbox) {
+                return Number(checkbox.value); // ID를 숫자로 변환하여 전송
+            });
+
+            // 서버로 Todo ID 배열을 JSON 형태로 전송
+            axios.post('/home/downloadTodoList', todoIds)
+                .then(function (response) {
+                    console.log(response);
+                    alert('Todo 다운로드 성공!');
+                })
+                .catch(function (error) {
+                    console.error('Todo 다운로드 실패', error);
+                    alert('서버 오류가 발생했습니다.');
+                });
+        }
+    }
+
+
+
+
 
 
 </script>

@@ -32,7 +32,6 @@ public class TodoService {
     private final HttpSession httpSession;  // HttpSession 주입
 
 
-
     //값을 추가하는 서비스
     public Todo join(TodoRequest todoRequest) {
         Long userId = (Long) httpSession.getAttribute("userId");
@@ -174,7 +173,7 @@ public class TodoService {
     }
     //------------------------------------------------------------------------------------------------
 
-
+    //그룹화 된 투두리스트 불러오는 메서드
     public List<TodoRequest> getTodoListByGroupId(Long groupId) {
         List<GroupList> groupLists = groupListRepository.findByTodoGroup_Id(groupId);
 
@@ -192,13 +191,45 @@ public class TodoService {
             return Collections.emptyList();
         }
     }
+    //------------------------------------------------------------------------------------------------
 
+    // 다운로드한 Todo를 현재 로그인한 사용자의 Todo 리스트에 추가하는 메서드
+    public void downloadTodoList(List<Long> todoIds, Long userId) {
+        // 기존 Todo들을 ID로 조회
+        List<Todo> todosToDownload = todoRepositroy.findAllById(todoIds);
 
+        // 새로운 Todo들을 저장하기 위한 리스트
+        List<Todo> newTodos = new ArrayList<>();
 
+        // 사용자 ID로 사용자 객체를 찾음
+        Optional<User> optionalUser = userRepository.findById(userId);
 
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
 
+            // 각 Todo를 복제하여 새로운 Todo를 생성하고 사용자를 설정
+            for (Todo todo : todosToDownload) {
+                Todo newTodo = new Todo();
+                newTodo.setTitle(todo.getTitle());
+                newTodo.setStartTime(todo.getStartTime());
+                newTodo.setEndTime(todo.getEndTime());
+                newTodo.setMemo(todo.getMemo());
+                newTodo.setPlace(todo.getPlace());
+                newTodo.setUser(user);
 
+                newTodos.add(newTodo);
+            }
+            // 새로운 Todo들을 저장
+            todoRepositroy.saveAll(newTodos);
 
+        } else {
+            // 사용자를 찾지 못한 경우에 대한 처리
+            // (예: 에러 로깅 또는 예외 처리)
+            log.error("사용자를 찾을 수 없습니다. 사용자 ID: {}", userId);
+            // 또는 특정 예외를 던지는 등의 처리
+        }
+    }
+    //------------------------------------------------------------------------------------------------
 
 }
 

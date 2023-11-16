@@ -9,7 +9,10 @@
 </head>
 <body>
 <!--네비게이션바 -->
-<div th:include="navigation.html"></div>
+<!-- 새로운 코드 -->
+<div th:insert="~{navigation.html}"></div>
+
+
 
 <!--홈 화면 루투리스트 목록 -->
 <div class="row m-0">
@@ -50,8 +53,9 @@
         </div>
     </div>
     <div class="col-md-7 pr-0">
-        <!-- 캘린더 영역 -->
-        <div th:include="calendar.html"></div>
+        <div th:insert="~{calendar.html}"></div>
+
+
     </div>
 </div>
 <!--------------------------------------------------------------------------->

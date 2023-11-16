@@ -1,7 +1,5 @@
 package inhatc.TakeMyRoutine.repository;
 
-import inhatc.TakeMyRoutine.domain.GroupList;
-import inhatc.TakeMyRoutine.domain.Todo;
 import inhatc.TakeMyRoutine.domain.TodoGroup;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

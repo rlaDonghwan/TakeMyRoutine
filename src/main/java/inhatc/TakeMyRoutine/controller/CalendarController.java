@@ -1,8 +1,6 @@
 package inhatc.TakeMyRoutine.controller;
 
 import inhatc.TakeMyRoutine.domain.Todo;
-import inhatc.TakeMyRoutine.domain.User;
-import inhatc.TakeMyRoutine.dto.TodoRequest;
 import inhatc.TakeMyRoutine.service.TodoService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +27,7 @@ import java.util.stream.Collectors;
 public class CalendarController {
 
     private final TodoService todoService;
+
     //캘린더 화면 컨트롤러
     @GetMapping("/calendar")
     public String calendarPage(Model model, HttpSession session) {
@@ -146,6 +145,23 @@ public class CalendarController {
         }
     }
     //-------------------------------------------------------------------------------------------------
+
+    //로그인 체킹 메서드
+    @GetMapping("/calendar/checkSession")
+    public ResponseEntity<Boolean> checkSession(HttpSession session) {
+        // 세션에서 userId 가져오기
+        Long userId = (Long) session.getAttribute("userId");
+
+        if (userId != null) {
+            // 세션 아이디가 존재하면 true 반환
+            return ResponseEntity.ok(true);
+        } else {
+            // 세션 아이디가 없으면 false 반환
+            return ResponseEntity.ok(false);
+        }
+    }
+    //-------------------------------------------------------------------------------------------------
+
 
 
 }

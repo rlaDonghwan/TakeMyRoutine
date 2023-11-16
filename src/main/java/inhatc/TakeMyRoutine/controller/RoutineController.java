@@ -1,13 +1,12 @@
 package inhatc.TakeMyRoutine.controller;
 
-import inhatc.TakeMyRoutine.domain.GroupList;
-import inhatc.TakeMyRoutine.domain.Todo;
 import inhatc.TakeMyRoutine.domain.TodoGroup;
 import inhatc.TakeMyRoutine.domain.User;
 import inhatc.TakeMyRoutine.dto.TodoRequest;
 import inhatc.TakeMyRoutine.service.TodoGroupService;
 import inhatc.TakeMyRoutine.service.TodoService;
 import inhatc.TakeMyRoutine.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -99,7 +98,6 @@ public class RoutineController {
     }
     //---------------------------------------------------------------------------------------------------------------
 
-
     // 그룹을 공유하는 메서드
     @PostMapping("/shareGroups")
     public ResponseEntity<String> shareGroups(@RequestBody Map<String, List<Long>> request) {
@@ -114,12 +112,13 @@ public class RoutineController {
     }
     //---------------------------------------------------------------------------------------------------------------
 
+    //그룹화된 투두리스트 출력
     @GetMapping("/getTodoListByGroupId")
     public ResponseEntity<List<TodoRequest>> getTodoListByGroupId(@RequestParam Long groupId) {
         List<TodoRequest> todoList = todoService.getTodoListByGroupId(groupId);
         if (todoList != null && !todoList.isEmpty()) {
             List<TodoRequest> todoRequestList = todoList.stream()
-                    .map(todo -> new TodoRequest(todo.getTodoId(), todo.getTodoNickName(), todo.getTitle(), todo.getStartTime(), todo.getEndTime(), todo.getMemo(), todo.getPlace()))
+                    .map(todo -> new TodoRequest(todo.getTodoId(), todo.getTitle(), todo.getStartTime(), todo.getEndTime(), todo.getMemo(), todo.getPlace()))
                     .collect(Collectors.toList());
 
             return new ResponseEntity<>(todoRequestList, HttpStatus.OK);
@@ -127,7 +126,19 @@ public class RoutineController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+    //---------------------------------------------------------------------------------------------------------------
 
+    //루틴 다운로드
+    @PostMapping("/downloadTodoList")
+    public ResponseEntity<String> downloadTodoList(@RequestBody List<Long> todoIds, HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
+        }
+        todoService.downloadTodoList(todoIds, userId);
+        return ResponseEntity.ok("Download completed");
+    }
+    //-------------------------------------------------------------------------------------------------
 
 
 }
