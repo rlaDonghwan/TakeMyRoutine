@@ -20,29 +20,29 @@
       <form th:method="post" th:action="@{/{loginType}/join(loginType=${loginType})}" th:object="${joinRequest}"
             class="needs-validation" novalidate>
         <div class="mb-3">
-          <label for="loginId" class="form-label">로그인 아이디:</label>
-          <input type="text" th:field="*{loginId}" class="form-control" id="loginId"
+          <label for="loginId" class="form-label">로그인 아이디</label>
+          <input type="text" th:field="*{loginId}" class="form-control" id="loginId" placeholder="아이디를 입력해세요!"
                  th:errorclass="is-invalid" required>
           <div class="invalid-feedback" th:errors="*{loginId}"></div>
         </div> 
 
         <div class="mb-3">
-          <label for="password" class="form-label">비밀번호:</label>
-          <input type="password" th:field="*{password}" class="form-control" id="password"
+          <label for="password" class="form-label">비밀번호</label>
+          <input type="password" th:field="*{password}" class="form-control" id="password" placeholder="비밀번호를 입력해세요!"
                  th:errorclass="is-invalid" required>
           <div class="invalid-feedback" th:errors="*{password}"></div>
         </div>
 
         <div class="mb-3">
-          <label for="passwordCheck" class="form-label">비밀번호 확인:</label>
-          <input type="password" th:field="*{passwordCheck}" class="form-control" id="passwordCheck"
+          <label for="passwordCheck" class="form-label">비밀번호 확인</label>
+          <input type="password" th:field="*{passwordCheck}" class="form-control" id="passwordCheck" placeholder="비밀번호 확인"
                  th:errorclass="is-invalid" required>
           <div class="invalid-feedback" th:errors="*{passwordCheck}"></div>
         </div>
 
         <div class="mb-3">
-          <label for="nickname" class="form-label">닉네임:</label>
-          <input type="text" th:field="*{nickname}" class="form-control" id="nickname"
+          <label for="nickname" class="form-label">닉네임</label>
+          <input type="text" th:field="*{nickname}" class="form-control" id="nickname" placeholder="닉네입을 입력해세요!"
                  th:errorclass="is-invalid" required>
           <div class="invalid-feedback" th:errors="*{nickname}"></div>
         </div>

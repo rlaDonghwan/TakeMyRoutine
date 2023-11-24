@@ -28,11 +28,9 @@ public class TodoRequest {
 
     private String place;
 
-
     public TodoRequest(Long todoId) {
         this.todoId = todoId;
     }
-
 
     public TodoRequest(Todo todo) {
         this.todoId = todo.getId();

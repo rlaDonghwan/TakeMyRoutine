@@ -164,26 +164,27 @@ public class TodoService {
         List<TodoGroup> todoGroups = todoGroupRepository.findByGroupLists_Todo_IdIn(todoIds);
         todoGroupRepository.deleteAll(todoGroups);
 
-        // 수정: deleteByGroupIdIn -> deleteByIdIn으로 변경
         todoGroupRepository.deleteByIdIn(todoIds);
-
+        System.out.println(todoIds);
         // 나머지 삭제 로직은 유지합니다.
         todoRepositroy.deleteByIdIn(todoIds);
         groupListRepository.deleteByTodoIdIn(todoIds);
     }
     //------------------------------------------------------------------------------------------------
 
+
+
     //그룹화 된 투두리스트 불러오는 메서드
     public List<TodoRequest> getTodoListByGroupId(Long groupId) {
-        List<GroupList> groupLists = groupListRepository.findByTodoGroup_Id(groupId);
+        List<GroupList> groupLists = groupListRepository.findByTodoGroup_Id(groupId); //그룹 아이디로 그룹화된걸 찾음
 
-        List<Long> todoIds = groupLists.stream()
+        List<Long> todoIds = groupLists.stream() //그룹화된 Todoid를 찾아서 리스트에 넣음
                 .map(GroupList::getTodo)
                 .map(Todo::getId)
                 .collect(Collectors.toList());
 
-        if (!todoIds.isEmpty()) {
-            List<Todo> todos = todoRepositroy.findAllById(todoIds);
+        if (!todoIds.isEmpty()) { //리스트가 존재하면
+            List<Todo> todos = todoRepositroy.findAllById(todoIds); //TodoRequest(DTO)에 접근하여 값을 가져옴
             return todos.stream()
                     .map(TodoRequest::new)
                     .collect(Collectors.toList());

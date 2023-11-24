@@ -83,6 +83,24 @@ public class TodoController {
     }
     //-------------------------------------------------------------------------------------------------
 
+    //그룹에 존재 여부를 확인하는 컨트롤러
+    @PostMapping("/checkGroupExistence")
+    public ResponseEntity<Map<String, Boolean>> checkGroupExistence(@RequestBody Map<String, List<Long>> requestBody) {
+        try {
+            List<Long> todoIds = requestBody.get("todoIds");
+            boolean exists = todoService.checkGroupExistence(todoIds);
+
+            Map<String, Boolean> response = new HashMap<>();
+            response.put("exists", exists);
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    //-------------------------------------------------------------------------------------------------
+
     //투두리스트 삭제하는 컨트롤러
     @PostMapping("/deleteTodos")
     public ResponseEntity<String> deleteTodo(@RequestBody Map<String, List<Long>> requestBody) {
@@ -115,23 +133,7 @@ public class TodoController {
     }
     //-------------------------------------------------------------------------------------------------
 
-    //그룹에 존재 여부를 확인하는 컨트롤러
-    @PostMapping("/checkGroupExistence")
-    public ResponseEntity<Map<String, Boolean>> checkGroupExistence(@RequestBody Map<String, List<Long>> requestBody) {
-        try {
-            List<Long> todoIds = requestBody.get("todoIds");
-            boolean exists = todoService.checkGroupExistence(todoIds);
 
-            Map<String, Boolean> response = new HashMap<>();
-            response.put("exists", exists);
-
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-    //-------------------------------------------------------------------------------------------------
 
     //시간 포멧 메서드
     private LocalDateTime getLocalDateTimeFromObject(Object value) {
@@ -185,6 +187,5 @@ public class TodoController {
                 .collect(Collectors.toList());
     }
     //-------------------------------------------------------------------------------------------------
-
 
 }

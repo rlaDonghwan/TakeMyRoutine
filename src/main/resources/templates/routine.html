@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <title>Routine List</title>
@@ -7,12 +8,11 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/fullcalendar.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
     <!-- FullCalendar 스타일시트 및 스크립트 추가 -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/fullcalendar.min.css"/>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/fullcalendar.min.css" />
 
     <style>
         body {
@@ -24,24 +24,74 @@
         }
 
         .btn-container {
-            margin-bottom: 20px;
+            margin-bottom: 1px;
+        }
+
+        .routine-list-header {
+            color: black;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            margin-bottom: 1px; /* 하단 여백 추가 */
+        }
+
+        .routine-list-header h3 {
+            margin: 0;
+        }
+
+        .routine-list-actions {
+            margin-bottom: 20px; /* 버튼 간격 조정 */
+        }
+
+        .routine-list-actions button {
+            margin-right: 10px; /* 버튼 간격 조정 */
+        }
+
+        .table th,
+        .table td {
+            text-align: center; /* 테이블 셀 내용 가운데 정렬 */
+        }
+
+        .share-list-header {
+            /*background-color: #22e1f0;*/
+            color: black;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            margin-bottom: 1px; /* 하단 여백 추가 */
+        }
+
+        .download-button {
+            margin-bottom: 20px; /* 버튼 간격 조정 */
+        }
+
+        .download-button {
+            margin-right: 10px; /* 버튼 간격 조정 */
+        }
+
+        .table th,
+        .table td {
+            text-align: center; /* 테이블 셀 내용 가운데 정렬 */
         }
     </style>
+
 </head>
+
 <body>
 <div th:insert="~{navigation.html}"></div>
 
-
 <div class="container todo-container">
     <div class="row">
-        <!--    그룹화된 루틴 리스트 출력창-->
+        <!-- 그룹화된 루틴 리스트 출력창-->
         <div class="col-md-5">
-            <h3 class="text-center mb-4">Routine List</h3>
+            <div class="routine-list-header">
+                <h3 class="text-center mb-4">Routine List</h3>
+            </div>
             <div class="border p-3">
-                <div class="btn-container">
-                    <button class="btn btn-primary ml-2" onclick="openUpdateModal()">수정</button>
-                    <button class="btn btn-danger ml-2" onclick="deleteGroup()">삭제</button>
-                    <button class="btn btn-info ml-2" onclick="shareGroup()">공유하기</button>
+                <div class="routine-list-actions">
+                    <button class="btn btn-primary" onclick="openUpdateModal()">수정</button>
+                    <button class="btn btn-danger" onclick="deleteGroup()">삭제</button>
+                    <button class="btn btn-info" onclick="shareGroup()">공유하기</button>
                 </div>
                 <table class="table table-striped">
                     <thead>
@@ -54,7 +104,7 @@
                     <tbody>
                     <tr th:each="todoGroup : ${todoGroups}">
                         <td>
-                            <input type="checkbox" class="select-checkbox" th:value="${todoGroup.id}"/>
+                            <input type="checkbox" class="select-checkbox routine-checkbox" th:value="${todoGroup.id}" />
                         </td>
                         <td th:text="${todoGroup.groupName}"></td>
                         <td th:text="${todoGroup.category} "></td>
@@ -63,6 +113,7 @@
                 </table>
             </div>
         </div>
+
         <!------------------------------------------------------------------------------------------------->
 
         <!-- 그룹 수정 모달 창 -->
@@ -99,11 +150,12 @@
 
         <!-- 공유 루틴 목록 테이블 -->
         <div class="col-md-5 ml-auto">
-            <h3 class="text-center mb-4">Share Routine List</h3>
+            <div class="share-list-header">
+                <h3 class="text-center mb-4">Share Routine List</h3>
+            </div>
             <div class="border p-3">
                 <div class="btn-container">
-                    <!-- 다운로드하기 버튼 추가 -->
-                    <button class="btn btn-success" onclick="downloadedTodoListModal()" id="downloadButton" disabled>
+                    <button class="btn btn-success download-button" onclick="downloadedTodoListModal()" id="downloadButton" disabled>
                         다운로드하기
                     </button>
                 </div>
@@ -117,11 +169,10 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <!-- 수정된 부분: shareGroups를 사용하여 공유 루틴 목록을 보여줌 -->
                     <tr th:each="sharedRoutine : ${groupList}">
                         <td>
-                            <input type="checkbox" class="select-checkbox" th:value="${sharedRoutine.id}"
-                                   th:data-name="${sharedRoutine.groupName}"/>
+                            <input type="checkbox" class="select-checkbox share-checkbox" th:value="${sharedRoutine.id}" th:data-name="${sharedRoutine.groupName}" />
+
                         </td>
                         <td th:text="${sharedRoutine.user.nickname}"></td>
                         <td th:text="${sharedRoutine.groupName}"></td>
@@ -131,6 +182,7 @@
                 </table>
             </div>
         </div>
+
         <!------------------------------------------------------------------------------------------------->
 
         <!-- 다운로드 투두 리스트 모달 창 -->
@@ -190,8 +242,6 @@
                 </div>
             </div>
         </div>
-
-
     </div>
 </div>
 </body>
@@ -210,7 +260,7 @@
 
     // 선택이 여러 개 선택될 경우 수정 버튼을 비활성화 시키는 함수
     function updateButtonState() {
-        var selectedIds = document.querySelectorAll('.select-checkbox:checked');
+        var selectedIds = document.querySelectorAll('.routine-checkbox:checked');
         var updateButton = document.querySelector('.btn-primary');
 
         if (selectedIds.length >= 2) {
@@ -273,7 +323,7 @@
 
     //그룹을 삭제하는 함수
     function deleteGroup() {
-        var selectedIds = document.querySelectorAll('.select-checkbox:checked');
+        var selectedIds = document.querySelectorAll('.routine-checkbox:checked');
 
         if (selectedIds.length === 0) {
             alert('선택된 항목이 없습니다.');
@@ -300,7 +350,7 @@
     //---------------------------------------------------------------------------------
 
     function shareGroup() {
-        var selectedIds = document.querySelectorAll('.select-checkbox:checked');
+        var selectedIds = document.querySelectorAll('.routine-checkbox:checked');
 
         if (selectedIds.length === 0) {
             alert('선택된 항목이 없습니다.');
@@ -326,20 +376,25 @@
     }
     //---------------------------------------------------------------------------------
 
-    var selectedDownloadId
-    //다운로드 버튼상태 확인 함수
+    var selectedDownloadId;
+
+    // 다운로드 버튼 상태 확인 함수
     function downloadedButtonState() {
-        var selectedIds = document.querySelectorAll('.select-checkbox:checked');
+        var selectedIds = document.querySelectorAll('.share-checkbox:checked');
         var downloadButton = document.getElementById('downloadButton');
 
-        if (selectedIds.length >= 2) {
+        if (selectedIds.length === 0) {
             downloadButton.disabled = true;
             selectedDownloadId = null; // 선택된 Todo가 없을 경우 selectedTodoId 초기화
+        } else if (selectedIds.length >= 2) {
+            downloadButton.disabled = true;
+            selectedDownloadId = null; // 선택된 Todo가 여러 개인 경우 selectedTodoId 초기화
         } else {
             downloadButton.disabled = false;
-            selectedDownloadId = selectedIds.length === 1 ? selectedIds[0].value : null;
+            selectedDownloadId = selectedIds[0].value;
         }
     }
+
     //---------------------------------------------------------------------------------
 
     //groupId로 그룹화된 Todo리스트 값을 요청하는 함수
@@ -382,7 +437,7 @@
         // 데이터에서 각 todo 추출 및 행 추가
         data.forEach(function (todo) {
             var newRow = '<tr>' +
-                '<td><input type="checkbox" class="select-checkbox" value="' + todo.todoId + '"/></td>' +
+                '<td><input type="checkbox" class="select-checkbox download-button" value="' + todo.todoId + '"/></td>' +
                 '<td>' + todo.title + '</td>' +
                 '<td>' + todo.memo + '</td>' +
                 '<td>' + todo.place + '</td>' +
@@ -393,8 +448,10 @@
         });
     }
     //---------------------------------------------------------------------------------
+
+    //공유된 루틴을 다운 함수
     function downloadTodoList() {
-        var selectedIds = document.querySelectorAll('.select-checkbox:checked');
+        var selectedIds = document.querySelectorAll('.download-button:checked');
 
         if (selectedIds.length === 0) {
             alert('선택된 항목이 없습니다.');
@@ -416,11 +473,7 @@
                 });
         }
     }
-
-
-
-
-
+    //---------------------------------------------------------------------------------
 
 </script>
 </html>

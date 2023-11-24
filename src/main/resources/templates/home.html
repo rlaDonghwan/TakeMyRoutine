@@ -6,27 +6,74 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"></script>
+
+
 </head>
+<style>
+    .todo-list-header {
+        color: black;
+        padding: 10px;
+        border-radius: 5px;
+        text-align: center;
+        margin-bottom: 1px;
+    }
+
+    .add-button,
+    .action-button {
+        margin-bottom: 10px;
+        margin-right: 10px;
+    }
+
+    .table th,
+    .table td {
+        text-align: center;
+    }
+
+    .table th:first-child,
+    .table td:first-child {
+        text-align: center;
+    }
+
+    .calendar-container {
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+    .table th:nth-child(1) {
+        width: 30px;
+    }
+    .table th:nth-child(2) {
+        width: auto;
+    }
+    .table th:nth-child(3) {
+        width: auto;
+    }
+    .table th:nth-child(4) {
+        width: auto;
+    }
+    .table th:nth-child(5) {
+        width: auto;
+    }
+
+</style>
+
 <body>
 <!--네비게이션바 -->
-<!-- 새로운 코드 -->
 <div th:insert="~{navigation.html}"></div>
-
-
-
 <!--홈 화면 루투리스트 목록 -->
 <div class="row m-0">
     <div class="col-md-5 pr-0">
-        <h3 class="text-center mb-4">Todo List</h3>
+        <div class="todo-list-header">
+            <h3 class="text-center mb-4">Todo List</h3>
+        </div>
         <div class="border p-3">
-            <button class="btn btn-success mb-3"
+            <button class="btn btn-success add-button"
                     th:onclick="|location.href='@{/{loginType}/todoInsert (loginType=${loginType})}'|">추가
             </button>
-            <button class="btn btn-primary mb-3" onclick="openUpdateModal()">수정</button>
-
-            <button class="btn btn-danger mb-3" onclick="completeTodo()">완료</button>
-
-            <button class="btn btn-success mb-3" id="groupBtn" onclick="openGroupModal()">루틴 그룹화</button>
+            <button class="btn btn-primary action-button" onclick="openUpdateModal()">수정</button>
+            <button class="btn btn-danger action-button" onclick="completeTodo()">완료</button>
+            <button class="btn btn-success action-button" id="groupBtn" onclick="openGroupModal()">루틴 그룹화</button>
 
             <table class="table table-striped p-0">
                 <thead>
@@ -53,9 +100,7 @@
         </div>
     </div>
     <div class="col-md-7 pr-0">
-        <div th:insert="~{calendar.html}"></div>
-
-
+        <div class="calendar-container" th:insert="~{calendar.html}"></div>
     </div>
 </div>
 <!--------------------------------------------------------------------------->
@@ -76,19 +121,19 @@
                 <form>
                     <div class="form-group">
                         <label for="updateTitle">제목</label>
-                        <input type="text" class="form-control" id="updateTitle" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="updateMemo">메모</label>
-                        <textarea class="form-control" id="updateMemo" required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="updatePlace">장소</label>
-                        <input type="text" class="form-control" id="updatePlace" required>
+                        <input type="text" class="form-control" id="updateTitle" required placeholder="수정할 제목">
                     </div>
                     <div class="form-group">
                         <label for="updateDateTime">날짜 및 시간</label>
                         <input type="datetime-local" class="form-control" id="updateDateTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="updateMemo">메모</label>
+                        <textarea class="form-control" id="updateMemo" required placeholder="수정할 내용"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="updatePlace">장소</label>
+                        <input type="text" class="form-control" id="updatePlace" required placeholder="수정할 약속 장소">
                     </div>
                     <button type="button" class="btn btn-primary" onclick="updateTodo()">저장</button>
                 </form>
@@ -114,11 +159,11 @@
                 <form id="routineForm">
                     <div class="form-group">
                         <label for="groupTitle">그룹 이름</label>
-                        <input type="text" class="form-control" id="groupTitle" required>
+                        <input type="text" class="form-control" id="groupTitle" required placeholder="그룹명을 입력해주세요!">
                     </div>
                     <div class="form-group">
                         <label for="groupCategory">그룹 종류</label>
-                        <input type="text" class="form-control" id="groupCategory" required>
+                        <input type="text" class="form-control" id="groupCategory" required placeholder="그룹명을 입력해주세요!">
                     </div>
                     <!-- 선택된 Todo들의 ID를 담을 hidden input 추가 -->
                     <input type="hidden" id="selectedTodoIds" th:value="${selectedTodoIds}"/>
@@ -130,20 +175,31 @@
         </div>
     </div>
 </div>
+<!--------------------------------------------------------------------------->
 
 </body>
 <script>
     var selectedTodoId;
 
-    // 문서 로딩 후 실행될 코드
     $(document).ready(function () {
         // 체크박스 변경 시 이벤트 리스너 추가
         $('.select-checkbox').on('change', function () {
             updateButtonState();
             groupButtonState();
+
+            // 사용자가 체크박스를 클릭할 때마다 알림 권한 요청
+            Notification.requestPermission().then(function (permission) {
+                if (permission === "granted") {
+                    console.log("알림 권한 허용됨");
+                } else {
+                    console.warn("알림 권한 거부됨");
+                }
+            });
         });
+
         groupButtonState();
     });
+
     //---------------------------------------------------------------------------------
 
     //선택이 여러개 선택 될경우 수정버튼을 비활성화 시키는 함수
@@ -285,7 +341,6 @@
 
     //------------------------------------------------------------------------------------------------
 
-
     //그룹 버튼 상태 함수 그룹이 2개 이상 선택될 때만 활성화 됌
     function groupButtonState() {
         var selectedIds = document.querySelectorAll('.select-checkbox:checked');
@@ -351,6 +406,4 @@
 
 
 </script>
-
-
 </html>

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <title>캘린더</title>
+
     <meta charset="UTF-8">
     <!-- Axios 및 FullCalendar 라이브러리 추가 -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -47,25 +48,25 @@
                 <form>
                     <div class="form-group">
                         <label for="eventTitle">제목</label>
-                        <input type="text" class="form-control" id="eventTitle" required>
+                        <input type="text" class="form-control" id="eventTitle" required placeholder="일정 제목">
                     </div>
                     <div class="form-group">
                         <label for="eventTime">시간</label>
                         <div class="input-group date">
                             <input type="datetime-local" class="form-control" id="eventTime" required>
                             <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" type="button" id="currentTimeButton">Now
+                                <button class="btn btn-outline-secondary" type="button" id="currentTimeButton">현재 시각
                                 </button>
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="eventContent">내용</label>
-                        <textarea class="form-control" id="eventContent" required></textarea>
+                        <textarea class="form-control" id="eventContent" required placeholder="일정 내용"></textarea>
                     </div>
                     <div class="form-group">
                         <label for="eventPlace">장소</label>
-                        <input type="text" class="form-control" id="eventPlace" required>
+                        <input type="text" class="form-control" id="eventPlace" required placeholder="약속 장소">
                     </div>
                 </form>
             </div>
@@ -170,7 +171,6 @@
                         console.error("세션 확인 중 오류 발생:", error);
                     });
             },
-
 
 
             eventClick: function (info) {
@@ -323,14 +323,46 @@
 
     }
 
+
     //-------------------------------------------------------------------------------------------
 
     // 추가된 부분: Update 모달 Delete 버튼 클릭 시 이벤트 삭제
     $('#deleteEventButton').on('click', function () {
-        deleteEvent(); //이벤트 삭제 함수를 호출해서 버튼을 클릭하면 데이터베이스에 삭제 요청
-        $('#updateEventModal').modal('hide');
+        // 그룹화 여부 확인
+        axios.post('/home/calendar/checkGroupExistence', {todoIds: [selectedEvent.id]}, {headers: {'Content-Type': 'application/json'}})
+            .then(function (response) {
+                var exists = response.data.exists;
+                if (exists) {
+                    if (confirm('이 투두리스트는 속한 그룹이 존재합니다. 그룹을 삭제하시겠습니까?')) {
+                        // 그룹 삭제 로직 호출
+                        deleteGroup([selectedEvent.id]);
+                    }
+                } else {
+                    deleteEvent([selectedEvent.id]);
+                }
+            })
+            .catch(function (error) {
+                console.error('Error checking group existence', error);
+            });
+
     });
     //-------------------------------------------------------------------------------------------
+
+    // 그룹 삭제 함수
+    function deleteGroup(todoId) {
+        axios.post('/home/calendar/deleteGroup', {todoId: todoId}, {headers: {'Content-Type': 'application/json'}})
+            .then(function (response) {
+                console.log(response);
+                location.reload();
+                // 그룹 삭제 후 이벤트 삭제
+                deleteEvent(todoId);
+            })
+            .catch(function (error) {
+                console.log(error.response.data);
+                alert('서버 오류가 발생했습니다.');
+            });
+    }
+
 
 </script>
 </body>

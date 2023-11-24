@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 </head>
 <body class="bg-light">
+
 <div class="container mt-5">
     <h1><a th:href="@{/home}" class="text-decoration-none">[[${pageName}]]</a></h1>
     <hr/>
@@ -16,7 +17,7 @@
         <div class="card-body">
             <form th:method="post" th:action="|@{/{loginType}/todoInsert(loginType=${loginType})}|"
                   th:object="${todoRequest}"
-                  class="needs-validation" novalidate>
+                  class="needs-validation" novalidate onsubmit="return validateForm()">
                 <div class="mb-3">
                     <label for="title" class="form-label">제목:</label>
                     <input type="text" th:field="*{title}" class="form-control" id="title"
@@ -56,6 +57,28 @@
         var localDate = new Date(currentDate.getTime() - currentDate.getTimezoneOffset() * 60000);
         var formattedDate = localDate.toISOString().slice(0, 16);
         document.getElementById('dateTimeInput').value = formattedDate;
+    }
+    function insertCurrentTime() {
+        var currentDate = new Date();
+        var localDate = new Date(currentDate.getTime() - currentDate.getTimezoneOffset() * 60000);
+        var formattedDate = localDate.toISOString().slice(0, 16);
+        document.getElementById('dateTimeInput').value = formattedDate;
+    }
+
+    // 입력값이 유효한지 확인하는 함수
+    function validateForm() {
+        var title = document.getElementById('title').value;
+        var startTime = document.getElementById('dateTimeInput').value;
+        var memo = document.getElementById('memo').value;
+        var place = document.getElementById('place').value;
+
+        // 유효성 검사
+        if (title === '' || startTime === '' || memo === '' || place === '') {
+            alert('모든 값을 입력해주세요.');
+            return false;
+        }
+
+        return true;
     }
 
 </script>

@@ -25,7 +25,6 @@ public class TodoGroupService {
     private final TodoRepositroy todoRepository;
     private final TodoGroupRepository todoGroupRepository;
     private final UserRepository userRepository;
-    private final GroupListRepository groupListRepository;
 
     //그룹을 추가하는 메서드
     public List<TodoGroup> insertGroup(Long userId, List<Long> todoIds, String groupTitle, String groupCategory) {
