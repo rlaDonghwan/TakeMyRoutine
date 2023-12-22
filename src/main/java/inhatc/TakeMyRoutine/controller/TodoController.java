@@ -157,7 +157,7 @@ public class TodoController {
     }
     //-------------------------------------------------------------------------------------------------
 
-    //투두 리스트를 그룹화 하는 컨트롤러
+    //투두 리스트를 루틴화 하는 컨트롤러
     @PostMapping("/insertGroup")
     @ResponseBody
     public List<Map<String, Object>> insertGroup(@RequestBody Map<String, Object> requestBody, HttpSession session) {

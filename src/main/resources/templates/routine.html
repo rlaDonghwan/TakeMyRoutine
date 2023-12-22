@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Routine List</title>
+    <title>My Routine List</title>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
@@ -85,13 +85,13 @@
         <!-- 그룹화된 루틴 리스트 출력창-->
         <div class="col-md-5">
             <div class="routine-list-header">
-                <h3 class="text-center mb-4">Routine List</h3>
+                <h3 class="text-center mb-4">My Routine List</h3>
             </div>
             <div class="border p-3">
                 <div class="routine-list-actions">
                     <button class="btn btn-primary" onclick="openUpdateModal()">수정</button>
                     <button class="btn btn-danger" onclick="deleteGroup()">삭제</button>
-                    <button class="btn btn-info" onclick="shareGroup()">공유하기</button>
+                    <button class="btn btn-info" onclick="shareGroup()">Routine Share</button>
                 </div>
                 <table class="table table-striped">
                     <thead>
@@ -151,12 +151,12 @@
         <!-- 공유 루틴 목록 테이블 -->
         <div class="col-md-5 ml-auto">
             <div class="share-list-header">
-                <h3 class="text-center mb-4">Share Routine List</h3>
+                <h3 class="text-center mb-4">List of shared routines</h3>
             </div>
             <div class="border p-3">
                 <div class="btn-container">
                     <button class="btn btn-success download-button" onclick="downloadedTodoListModal()" id="downloadButton" disabled>
-                        다운로드하기
+                        Take
                     </button>
                 </div>
                 <table class="table table-striped">
@@ -201,7 +201,7 @@
                         <div class="container-fluid">
                             <div class="row mb-4">
                                 <div class="col-md-12 text-center">
-                                    <h4 class="mb-3">Group Information</h4>
+                                    <h4 class="mb-3">Routine Information</h4>
                                 </div>
 
                             </div>
@@ -236,8 +236,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-success mr-2 mb-2" onclick="downloadTodoList()">다운로드</button>
-                        <button class="btn btn-secondary mb-2" data-dismiss="modal">닫기</button>
+                        <button class="btn btn-success mr-2 mb-2" onclick="downloadTodoList()">Take</button>
+                        <button class="btn btn-secondary mb-2" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>

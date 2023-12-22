@@ -32,13 +32,11 @@ public class TodoGroupService {
         TodoGroup todoGroup = new TodoGroup();
         todoGroup.setGroupName(groupTitle);
         todoGroup.setCategory(groupCategory);
-
         // 해당 유저 찾기
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         todoGroup.setUser(user);
-
         // GroupList 생성 및 설정
         List<GroupList> groupLists = new ArrayList<>();
         for (Long todoId : todoIds) {
@@ -49,19 +47,14 @@ public class TodoGroupService {
             groupList.setTodo(todo);
             groupLists.add(groupList);
         }
-
         // GroupList를 TodoGroup에 설정
         todoGroup.setGroupLists(groupLists);
-
         // 사용자의 그룹 목록에 새로운 그룹 추가
         user.getTodoGroups().add(todoGroup);
-
         // 그룹 저장
         todoGroupRepository.save(todoGroup);
-
         // 사용자 엔터티 저장
         userRepository.save(user);
-
         // 저장된 그룹 목록 반환
         return user.getTodoGroups();
     }
