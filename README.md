@@ -19,7 +19,7 @@
 
 # 프로젝트 개발 결과물 요약
 ![홈 페이지 메인 화면](https://github.com/rlaDonghwan/TakeMyRoutine/blob/main/%ED%99%88%ED%8E%98%EC%9D%B4%EC%A7%80%20%ED%99%94%EB%A9%B4.png?raw=true)
-**홈 페이지 메인 화면**
+<br>**홈 페이지 메인 화면**
 
 ![일정 추가 화면](https://github.com/rlaDonghwan/TakeMyRoutine/blob/main/%EC%9D%BC%EC%A0%95%20%EC%B6%94%EA%B0%80%20%ED%99%94%EB%A9%B4.png?raw=true)
 **일정 추가 화면**
