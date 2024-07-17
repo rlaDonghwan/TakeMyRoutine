@@ -39,11 +39,11 @@
 
 <div style="text-align: center;">
     <figure style="display: inline-block;">
-        <img src="https://github.com/rlaDonghwan/TakeMyRoutine/blob/main/%EC%9D%BC%EC%A0%95%20%EC%B6%94%EA%B0%80%20%ED%99%94%EB%A9%B4.png?raw=true" alt="일정 추가 화면" style="width: 400px;">
+        <img src="https://github.com/rlaDonghwan/TakeMyRoutine/blob/main/%EC%9D%BC%EC%A0%95%20%EC%B6%94%EA%B0%80%20%ED%99%94%EB%A9%B4.png?raw=true" alt="일정 추가 화면" style="width: 300px;">
         <br><strong>일정 추가 화면</strong>
     </figure>
     <figure style="display: inline-block; margin-left: 20px;">
-        <img src="https://github.com/rlaDonghwan/TakeMyRoutine/blob/main/%EC%9D%BC%EC%A0%95%20%EC%88%98%EC%A0%95%20%EB%B0%8F%20%EC%82%AD%EC%A0%9C%20%ED%99%94%EB%A9%B4.png?raw=true" alt="일정 수정 및 삭제 화면" style="width: 400px;">
+        <img src="https://github.com/rlaDonghwan/TakeMyRoutine/blob/main/%EC%9D%BC%EC%A0%95%20%EC%88%98%EC%A0%95%20%EB%B0%8F%20%EC%82%AD%EC%A0%9C%20%ED%99%94%EB%A9%B4.png?raw=true" alt="일정 수정 및 삭제 화면" style="width: 300px;">
         <br><strong>일정 수정 및 삭제 화면</strong>
     </figure>
 </div>
