@@ -7,7 +7,7 @@
 - 현재 본인은 생활비를 위해 주말마다 알바를 하고 평일에는 학업 및 프로젝트 진행을 하다 보니 해야 하는 일들을 아이폰에 미리 알림이나 캘린더를 자주 사용한다. 그런데 아이폰에 미리 알림과 캘린더는 서로 연동이 안돼서 캘린더에서는 미리 알림에 등록해 놓은 일정을 확인할 수 없어서 아쉬울 때가 많았다. 또한 학교 일정이 끝난 후 헬스장에 가거나 공부 및 프로젝트 진행을 할 때 목표를 정해 두고 하는 경우가 많은데 이 목표들을 효율적으로 관리할 수 없다는 것을 <그림 1-2>를 보면 확인할 수 있다.
 
 ![자주쓰는 미리알림과 캘린더 앱](https://github.com/rlaDonghwan/TakeMyRoutine/assets/115167094/d3c4c957-d0d8-4835-b8a1-70b09f0dff1e)
-**<그림 1-2> 자주쓰는 미리알림과 캘린더 앱**
+<br>**<그림 1-2> 자주쓰는 미리알림과 캘린더 앱**
 
 현재 진행하고자 하는 프로젝트는 본인이 일정을 관리하면서 개선되고자 하는 경험을 기반으로 계획되었다. 다양한 일정을 수행하는 사람들과 새로운 취미를 시작하는 단계에 있는 사람들을 위해 효과적으로 일정을 확인, 관리하고 루틴을 공유할 수 있는 웹페이지를 만드는 목표가 있다.
 
@@ -22,17 +22,17 @@
 <br>**홈 페이지 메인 화면**
 
 ![일정 추가 화면](https://github.com/rlaDonghwan/TakeMyRoutine/blob/main/%EC%9D%BC%EC%A0%95%20%EC%B6%94%EA%B0%80%20%ED%99%94%EB%A9%B4.png?raw=true)
-**일정 추가 화면**
+<br>**일정 추가 화면**
 
 ![일정 수정 및 삭제 화면](https://github.com/rlaDonghwan/TakeMyRoutine/blob/main/%EC%9D%BC%EC%A0%95%20%EC%88%98%EC%A0%95%20%EB%B0%8F%20%EC%82%AD%EC%A0%9C%20%ED%99%94%EB%A9%B4.png?raw=true)
-**일정 수정 및 삭제 화면**
+<br>**일정 수정 및 삭제 화면**
 
 ![루틴 화면](https://github.com/rlaDonghwan/TakeMyRoutine/blob/main/%EB%A3%A8%ED%8B%B4%20%ED%99%94%EB%A9%B4.png?raw=true)
-**루틴 화면**
+<br>**루틴 화면**
 메인 화면에서 리스트 옆에 있는 체크박스를 통해 원하는 일정을 루틴으로 만들어서 자신만에 루틴 목록을 만들 수 있다.
 
 ![공유 된 루틴 화면](https://github.com/rlaDonghwan/TakeMyRoutine/blob/main/%EA%B3%B5%EC%9C%A0%EB%90%9C%20%EB%A3%A8%ED%8B%B4%20%ED%99%94%EB%A9%B4.png?raw=true)
-**공유 된 루틴 화면**
+<br>**공유 된 루틴 화면**
 위 루틴 화면에서 체크 박스를 선택을 한 후 루틴 공유하기 버튼을 누르면 모든 사용자에게 공유된 루틴이 뜨게 된다. 이를 통해 사용자들끼리 루틴을 공유하여 자신만에 일정에 추가할 수 있다.
 
 ## 로그인 시스템 요구사양
@@ -68,7 +68,7 @@
 
 # 데이터 베이스 설계
 ![데이터베이스 ERD](https://github.com/rlaDonghwan/TakeMyRoutine/blob/main/TakeMyRoutineERD.png?raw=true)
-**데이터베이스 ERD**
+<br>**데이터베이스 ERD**
 
 ## 데이터베이스 구성도
 다음 그림은 데이터베이스에 구성도이다. 테이블은 총 4개이며 각 테이블은 사용자, 일정, 루틴화 목록의 정보를 포함하고 있다. todo에 있는 값을 루틴화 하면 todo_group 테이블에 루틴화된 이름과 종류 값이 들어가게 되고 group_list 테이블은 todo 테이블과 todo_group와 todo_id, group_id로 연결되어 루틴화된 todo를 찾을 때 사용된다.
