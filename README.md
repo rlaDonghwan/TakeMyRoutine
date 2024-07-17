@@ -20,6 +20,7 @@
 # 프로젝트 개발 결과물 요약
 ![홈 페이지 메인 화면](https://github.com/rlaDonghwan/TakeMyRoutine/blob/main/%ED%99%88%ED%8E%98%EC%9D%B4%EC%A7%80%20%ED%99%94%EB%A9%B4.png?raw=true)
 <br>**홈 페이지 메인 화면**
+버튼을 통해서 리스트에 목표를 추가, 삭제, 완료할 수 있습니다. 또한 캘린더를 클릭할 경우 모달 창을 통해서 일정을 추가하거나 수정, 삭제할 수 있습니다.
 
 ![일정 추가 화면](https://github.com/rlaDonghwan/TakeMyRoutine/blob/main/%EC%9D%BC%EC%A0%95%20%EC%B6%94%EA%B0%80%20%ED%99%94%EB%A9%B4.png?raw=true)
 <br>**일정 추가 화면**
