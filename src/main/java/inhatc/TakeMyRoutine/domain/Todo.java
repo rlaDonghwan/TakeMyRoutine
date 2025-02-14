@@ -30,8 +30,6 @@ public class Todo {
     @JsonIgnore
     private List<GroupList> groupLists;
 
-
-
     private String title; // 제목
 
     @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm")

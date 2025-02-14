@@ -176,9 +176,6 @@ public class CalendarController {
         }
     }
 
-
-
-
     //로그인 체킹 메서드
     @GetMapping("/calendar/checkSession")
     public ResponseEntity<Boolean> checkSession(HttpSession session) {

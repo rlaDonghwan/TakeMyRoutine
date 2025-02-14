@@ -4,7 +4,6 @@ import inhatc.TakeMyRoutine.domain.GroupList;
 import inhatc.TakeMyRoutine.domain.Todo;
 import inhatc.TakeMyRoutine.domain.TodoGroup;
 import inhatc.TakeMyRoutine.domain.User;
-import inhatc.TakeMyRoutine.repository.GroupListRepository;
 import inhatc.TakeMyRoutine.repository.TodoGroupRepository;
 import inhatc.TakeMyRoutine.repository.TodoRepositroy;
 import inhatc.TakeMyRoutine.repository.UserRepository;
