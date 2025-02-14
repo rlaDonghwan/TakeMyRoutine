@@ -18,21 +18,21 @@
 - 새로운 취미를 쉽게 시도할 수 있다. 개인 사용자는 본인의 To-do List나 캘린더로 사용을 하다가 운동이나 공부, 취미 등 자신만의 루틴이 필요할 때 루틴을 어떻게 계획해야 할지 잘 모를 경우 다른 사용자가 등록해 놓은 루틴을 불러와 사용할 수 있다. 프로젝트가 완료되었을 때 얻을 수 있는 것은 본인이 평소에 가지고 있던 생활 패턴, 운동 루틴, 평소의 꿀팁 등을 여러 사용자와 공유함으로써 다른 사용자들도 이를 바탕으로 본인의 패턴을 좀 더 효율적으로 관리하거나 처음 해보는 취미나 행동에 있어서 기존에 하던 사람들의 데이터를 바탕으로 좀 더 효과적으로 본인이 이루고 싶어 하는 취미, 공부, 생활 패턴 관리를 효율적으로 할 수 있다.
 
 # 프로젝트 개발 결과물 요약
-![홈 페이지 메인 화면](https://github.com/rlaDonghwan/TakeMyRoutine/blob/main/%ED%99%88%ED%8E%98%EC%9D%B4%EC%A7%80%20%ED%99%94%EB%A9%B4.png?raw=true)
+![홈 페이지 메인 화면](images/홈페이지 화면.png)
 <br>**홈 페이지 메인 화면**
 <br>버튼을 통해서 리스트에 목표를 추가, 삭제, 완료할 수 있습니다. 또한 캘린더를 클릭할 경우 모달 창을 통해서 일정을 추가하거나 수정, 삭제할 수 있습니다.
 
-![일정 추가 화면](https://github.com/rlaDonghwan/TakeMyRoutine/blob/main/%EC%9D%BC%EC%A0%95%20%EC%B6%94%EA%B0%80%20%ED%99%94%EB%A9%B4.png?raw=true)
+![일정 추가 화면](images/일정 추가 화면.png)
 <br>**일정 추가 화면**
 
-![일정 수정 및 삭제 화면](https://github.com/rlaDonghwan/TakeMyRoutine/blob/main/%EC%9D%BC%EC%A0%95%20%EC%88%98%EC%A0%95%20%EB%B0%8F%20%EC%82%AD%EC%A0%9C%20%ED%99%94%EB%A9%B4.png?raw=true)
+![일정 수정 및 삭제 화면](images/일정 수정 및 삭제 화면.png)
 <br>**일정 수정 및 삭제 화면**
 
-![루틴 화면](https://github.com/rlaDonghwan/TakeMyRoutine/blob/main/%EB%A3%A8%ED%8B%B4%20%ED%99%94%EB%A9%B4.png?raw=true)
+![루틴 화면](images/일정 수정 및 삭제 화면.png)
 <br>**루틴 화면**
 <br>메인 화면에서 리스트 옆에 있는 체크박스를 통해 원하는 일정을 루틴으로 만들어서 자신만에 루틴 목록을 만들 수 있다.
 
-![공유 된 루틴 화면](https://github.com/rlaDonghwan/TakeMyRoutine/blob/main/%EA%B3%B5%EC%9C%A0%EB%90%9C%20%EB%A3%A8%ED%8B%B4%20%ED%99%94%EB%A9%B4.png?raw=true)
+![공유 된 루틴 화면](images/공유된 루틴 화면.png)
 <br>**공유 된 루틴 화면**
 <br>위 루틴 화면에서 체크 박스를 선택을 한 후 루틴 공유하기 버튼을 누르면 모든 사용자에게 공유된 루틴이 뜨게 된다. 이를 통해 사용자들끼리 루틴을 공유하여 자신만에 일정에 추가할 수 있다.
 
@@ -68,7 +68,7 @@
 5. 공유된 루틴은 모든 사용자가 가져갈 수 있어야 한다.
 
 # 데이터 베이스 설계
-![데이터베이스 ERD](https://github.com/rlaDonghwan/TakeMyRoutine/blob/main/TakeMyRoutineERD.png?raw=true)
+![데이터베이스 ERD](images/TakeMyRoutineERD.png)
 <br>**데이터베이스 ERD**
 
 ## 데이터베이스 구성도
